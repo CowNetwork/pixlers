@@ -20,10 +20,9 @@ class FillTool : Tool() {
             if (color != replaceColor) continue
 
             pixels.add(coords)
-            queue.push((x - 1) to y)
-            queue.push((x + 1) to y)
-            queue.push(x to (y - 1))
-            queue.push(x to (y + 1))
+            listOf((x - 1) to y, (x + 1) to y, x to (y - 1), x to (y + 1))
+                    .filter { it !in pixels }
+                    .forEach { queue.add(it) }
         } while (queue.isNotEmpty())
 
         pixels.forEach { (x, y) -> this.setColor(x, y, color) }
