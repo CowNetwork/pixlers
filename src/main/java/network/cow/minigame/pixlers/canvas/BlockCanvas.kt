@@ -1,7 +1,7 @@
 package network.cow.minigame.pixlers.canvas
 
-import network.cow.minigame.pixlers.api.CanvasColor
-import network.cow.minigame.pixlers.api.canvas.Canvas
+import network.cow.minigame.pixlers.CanvasColor
+import network.cow.minigame.pixlers.canvas.Canvas
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.NoteBlock

@@ -1,6 +1,6 @@
-package network.cow.minigame.pixlers.api.canvas
+package network.cow.minigame.pixlers.canvas
 
-import network.cow.minigame.pixlers.api.CanvasColor
+import network.cow.minigame.pixlers.CanvasColor
 import java.awt.image.BufferedImage
 
 /**

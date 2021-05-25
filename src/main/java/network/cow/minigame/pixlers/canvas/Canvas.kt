@@ -1,7 +1,7 @@
-package network.cow.minigame.pixlers.api.canvas
+package network.cow.minigame.pixlers.canvas
 
-import network.cow.minigame.pixlers.api.CanvasColor
-import network.cow.minigame.pixlers.api.tool.Layer
+import network.cow.minigame.pixlers.CanvasColor
+import network.cow.minigame.pixlers.tool.Layer
 import java.util.Stack
 
 /**

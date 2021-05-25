@@ -1,4 +1,4 @@
-package network.cow.minigame.pixlers.api
+package network.cow.minigame.pixlers
 
 /**
  * @author Benedikt Wüller
