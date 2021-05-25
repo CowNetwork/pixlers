@@ -12,7 +12,7 @@ class ClearTool : Tool() {
         get() = Canvas.BASE_COLOR
         set(_) = Unit
 
-    override val action: Action.(Int, Int) -> Unit = { _, _ ->
+    override val primaryAction: Action.(Int, Int) -> Unit = { _, _ ->
         for (y in 0 until this.height) {
             for (x in 0 until this.width) {
                 this.setColor(x, y, color)
