@@ -1,20 +1,22 @@
-package network.cow.minigame.pixlers.tool
+package network.cow.minigame.pixlers.api.tool
 
+import network.cow.minigame.pixlers.api.canvas.Canvas
 import java.util.LinkedList
 
 /**
  * @author Benedikt Wüller
  */
-class FillTool : Tool() {
+class FillTool(canvas: Canvas) : LayerTool(canvas) {
 
-    override val primaryAction: Action.(Int, Int) -> Unit = { x, y ->
+    override val primaryAction: (Layer.() -> Unit) = {
         val pixels = mutableListOf<Pair<Int, Int>>()
         val queue = LinkedList<Pair<Int, Int>>()
-        queue.push(x to y)
+        queue.push(cursorX to cursorY)
 
-        val replaceColor = this.getColor(x, y)
+        val replaceColor = this.getColor(cursorX, cursorY)
         do {
             val coords = queue.poll()
+            val (x, y) = coords
 
             val color = this.getColor(coords.first, coords.second)
             if (color != replaceColor) continue
@@ -25,7 +27,7 @@ class FillTool : Tool() {
                     .forEach { queue.add(it) }
         } while (queue.isNotEmpty())
 
-        pixels.forEach { (x, y) -> this.setColor(x, y, color) }
+        pixels.forEach { (x, y) -> this.setColor(x, y, canvas.currentColor) }
     }
 
 }

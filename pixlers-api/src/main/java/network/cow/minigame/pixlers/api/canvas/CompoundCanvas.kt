@@ -1,6 +1,6 @@
-package network.cow.minigame.pixlers.canvas
+package network.cow.minigame.pixlers.api.canvas
 
-import network.cow.minigame.pixlers.CanvasColor
+import network.cow.minigame.pixlers.api.CanvasColor
 
 /**
  * @author Benedikt Wüller
@@ -17,12 +17,6 @@ class CompoundCanvas(vararg canvas: Canvas) : Canvas(canvas.first().width, canva
         }
     }
 
-    override fun setColor(x: Int, y: Int, color: CanvasColor) {
-        this.canvas.forEach { it.setColor(x, y, color) }
-    }
-
-    override fun getColor(x: Int, y: Int): CanvasColor? {
-        return this.canvas.first().getColor(x, y)
-    }
+    override fun drawColor(x: Int, y: Int, color: CanvasColor) = this.canvas.forEach { it.drawColor(x, y, color) }
 
 }

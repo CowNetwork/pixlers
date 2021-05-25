@@ -1,4 +1,4 @@
-package network.cow.minigame.pixlers
+package network.cow.minigame.pixlers.api
 
 import org.bukkit.Instrument
 import org.bukkit.Material
