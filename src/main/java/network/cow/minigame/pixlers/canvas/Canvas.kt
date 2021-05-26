@@ -40,6 +40,16 @@ abstract class Canvas(val width: Int, val height: Int) {
         this.refresh(layer)
     }
 
+    internal fun addWithoutUndo(layer: Layer) {
+        this.layers.add(layer)
+        this.refresh(layer)
+    }
+
+    internal fun removeWithoutRedo(layer: Layer) {
+        this.layers.remove(layer)
+        this.refresh(layer)
+    }
+
     fun refresh() {
         (0 until this.height).forEach { y ->
             (0 until this.width).forEach { x ->

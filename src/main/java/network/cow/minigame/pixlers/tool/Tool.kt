@@ -1,18 +1,18 @@
 package network.cow.minigame.pixlers.tool
 
 import network.cow.minigame.pixlers.canvas.Canvas
+import java.awt.Point
 
 /**
  * @author Benedikt Wüller
  */
 abstract class Tool(protected val canvas: Canvas) {
 
-    protected var cursorX: Int = -1
-    protected var cursorY: Int = -1
+    protected val cursor = Point(-1, -1)
 
     fun updateCursor(x: Int, y: Int) {
-        this.cursorX = x
-        this.cursorY = y
+        this.cursor.x = x
+        this.cursor.y = y
         this.onCursorMoved()
     }
 

@@ -11,9 +11,9 @@ class FillTool(canvas: Canvas) : LayerTool(canvas) {
     override val primaryAction: (Layer.() -> Unit) = {
         val pixels = mutableListOf<Pair<Int, Int>>()
         val queue = LinkedList<Pair<Int, Int>>()
-        queue.push(cursorX to cursorY)
+        queue.push(cursor.x to cursor.y)
 
-        val replaceColor = this.getColor(cursorX, cursorY)
+        val replaceColor = this.getColor(cursor.x, cursor.y)
         do {
             val coords = queue.poll()
             val (x, y) = coords

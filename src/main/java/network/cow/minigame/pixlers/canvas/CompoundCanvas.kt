@@ -7,16 +7,16 @@ import network.cow.minigame.pixlers.CanvasColor
  */
 class CompoundCanvas(vararg canvas: Canvas) : Canvas(canvas.first().width, canvas.first().width) {
 
-    private val canvas = mutableListOf<Canvas>()
+    private val canvases = mutableListOf<Canvas>()
 
     init {
         for (it in canvas) {
             if (it.width != this.width || it.height != this.height) {
-                error("All canvas must be the same dimensions.")
+                error("All canvases must be the same dimensions.")
             }
         }
     }
 
-    override fun drawColor(x: Int, y: Int, color: CanvasColor) = this.canvas.forEach { it.drawColor(x, y, color) }
+    override fun drawColor(x: Int, y: Int, color: CanvasColor) = this.canvases.forEach { it.drawColor(x, y, color) }
 
 }

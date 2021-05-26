@@ -1,18 +1,30 @@
 package network.cow.minigame.pixlers
 
+import java.awt.Point
+
 /**
  * @author Benedikt Wüller
  */
 
-fun getCoordinatesInCircle(centerX: Int, centerY: Int, diameter: Int) : List<Pair<Int, Int>> {
-    val coordinates = mutableListOf<Pair<Int, Int>>()
-    val radius = diameter / 2
-    for (relativeY in 0 until diameter) {
-        for (relativeX in 0 until diameter) {
-            val x = centerX - radius + relativeY
-            val y = centerY - radius + relativeX
-            coordinates.add(x to y)
+fun getPointsInCircle(center: Point, radius: Int) = getPointsInEllipse(center, radius, radius)
+
+fun getPointsInEllipse(center: Point, horizontalRadius: Int, verticalRadius: Int) : List<Point> {
+    // https://stackoverflow.com/a/10322607/1690664
+
+    val points = mutableListOf<Point>()
+
+    val squaredVerticalRadius = verticalRadius * verticalRadius
+    val squaredHorizontalRadius = horizontalRadius * horizontalRadius
+
+    for (y in -verticalRadius until verticalRadius) {
+        for (x in -horizontalRadius until horizontalRadius) {
+            val squaredX = x * x
+            val squaredY = y * y
+            if (squaredX * squaredVerticalRadius + squaredY * squaredHorizontalRadius <= squaredVerticalRadius * squaredHorizontalRadius) {
+                points.add(Point(center.x + x, center.y + y))
+            }
         }
     }
-    return coordinates
+
+    return points
 }
