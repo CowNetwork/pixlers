@@ -1,7 +1,19 @@
 package network.cow.minigame.pixlers.tool
 
+import net.kyori.adventure.text.Component
+import network.cow.messages.adventure.comp
+import network.cow.messages.adventure.formatToComponent
+import network.cow.messages.adventure.gradient
+import network.cow.messages.adventure.highlight
+import network.cow.messages.adventure.info
+import network.cow.messages.adventure.plus
+import network.cow.messages.core.Gradients
 import network.cow.minigame.pixlers.shape.ShapeType
 import network.cow.minigame.pixlers.canvas.Canvas
+import network.cow.spigot.extensions.ItemBuilder
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.awt.Point
 
 /**
@@ -42,6 +54,7 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
     }
 
     private fun refreshLayer(layer: Layer) {
+        layer.clear()
         val from = this.firstPosition ?: return
         val to = Point(this.cursor.x, this.cursor.y)
         val pixels = this.type.shape.calculatePixels(from, to)
@@ -53,11 +66,30 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
         val index = ShapeType.values().indexOf(this.type)
         val nextIndex = if (index == ShapeType.values().lastIndex) 0 else index + 1
         this.type = ShapeType.values()[nextIndex]
+        this.onUpdateItem()
     }
 
     override fun onCancel() {
         this.firstPosition = null
         this.layer?.let { this.canvas.removeWithoutRedo(it) }
+    }
+
+    override fun getItemStack(player: Player): ItemStack {
+        // TODO: translate
+        val material = when (this.type) {
+            ShapeType.LINE -> Material.DIAMOND_HOE
+            ShapeType.RECTANGLE -> Material.STONE_HOE
+            ShapeType.ELLIPSE -> Material.GOLDEN_HOE
+        }
+        
+        return ItemBuilder(material)
+                .name("Form".gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.type.displayName.comp()).info())
+                .lore(
+                        Component.empty(),
+                        "Linksklicke".highlight() + ", um die Form zu wechseln.".info(),
+                        "Rechtsklicke".highlight() + " zweimal, um die Form zu zeichnen.".info()
+                )
+                .build()
     }
 
 }

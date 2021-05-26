@@ -3,10 +3,10 @@ package network.cow.minigame.pixlers.shape
 /**
  * @author Benedikt Wüller
  */
-enum class ShapeType(val shape: Shape) {
+enum class ShapeType(val displayName: String, val shape: Shape) {
 
-    LINE(Line()),
-    RECTANGLE(Rectangle()),
-    ELLIPSE(Ellipse()),
+    LINE("Linie", Line()),
+    RECTANGLE("Rechteck", Rectangle()),
+    ELLIPSE("Ellipse", Ellipse()),
 
 }

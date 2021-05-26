@@ -1,6 +1,16 @@
 package network.cow.minigame.pixlers.tool
 
+import net.kyori.adventure.text.Component
+import network.cow.messages.adventure.gradient
+import network.cow.messages.adventure.highlight
+import network.cow.messages.adventure.info
+import network.cow.messages.adventure.plus
+import network.cow.messages.core.Gradients
 import network.cow.minigame.pixlers.canvas.Canvas
+import network.cow.spigot.extensions.ItemBuilder
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 /**
  * @author Benedikt Wüller
@@ -13,6 +23,17 @@ class ClearTool(canvas: Canvas) : LayerTool(canvas) {
                 this.setColor(x, y, Canvas.BASE_COLOR)
             }
         }
+    }
+
+    override fun getItemStack(player: Player): ItemStack {
+        // TODO: translate
+        return ItemBuilder(Material.IRON_HOE)
+                .name("Alles löschen".gradient(Gradients.CORPORATE))
+                .lore(
+                        Component.empty(),
+                        "Rechtsklicke".highlight() + ", um deine Leinwand zurückzusetzen.".info()
+                )
+                .build()
     }
 
 }

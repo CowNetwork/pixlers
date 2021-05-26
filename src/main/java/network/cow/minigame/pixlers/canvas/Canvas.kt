@@ -19,6 +19,7 @@ abstract class Canvas(val width: Int, val height: Int) {
     var currentColor = BASE_COLOR
 
     fun apply(layer: Layer) {
+        if (layer.getChanges().isEmpty()) return
         this.layers.add(layer)
         this.redoLayers.clear()
         this.refresh(layer)
@@ -41,6 +42,7 @@ abstract class Canvas(val width: Int, val height: Int) {
     }
 
     internal fun addWithoutUndo(layer: Layer) {
+        if (layer.getChanges().isEmpty()) return
         this.layers.add(layer)
         this.refresh(layer)
     }

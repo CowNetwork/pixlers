@@ -201,7 +201,3 @@ fun Block.getCanvasColor() : CanvasColor? {
     val data = this.blockData as NoteBlock
     return CanvasColor.values().firstOrNull { data.instrument == it.instrument && data.note == it.note }
 }
-
-fun Color.toCanvasColor() : CanvasColor? {
-    return CanvasColor.values().firstOrNull { it.color.rgb == this.rgb }
-}

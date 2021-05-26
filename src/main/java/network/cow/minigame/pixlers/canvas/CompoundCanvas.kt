@@ -7,7 +7,7 @@ import network.cow.minigame.pixlers.CanvasColor
  */
 class CompoundCanvas(vararg canvas: Canvas) : Canvas(canvas.first().width, canvas.first().width) {
 
-    private val canvases = mutableListOf<Canvas>()
+    val canvases = mutableListOf<Canvas>()
 
     init {
         for (it in canvas) {

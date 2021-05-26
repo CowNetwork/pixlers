@@ -15,6 +15,7 @@ class Layer(private val canvas: Canvas) {
 
     fun setColor(x: Int, y: Int, color: CanvasColor) {
         if (x < 0 || x >= this.canvas.width || y < 0 || y >= this.canvas.height) return
+//        if (color == this.getColor(x, y)) return
         this.changes[x to y] = color
     }
 
