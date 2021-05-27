@@ -26,7 +26,9 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
     private var firstPosition: Point? = null
     private var layer: Layer? = null
 
-    override fun onPrimary() {
+    override fun onPrimary() : Boolean {
+        if (this.cursor.x < 0 || this.cursor.x >= this.canvas.width || this.cursor.y < 0 || this.cursor.y >= this.canvas.height) return false
+
         if (this.firstPosition == null) {
             this.firstPosition = Point(this.cursor.x, this.cursor.y)
 
@@ -34,16 +36,17 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
             this.layer = layer
             this.refreshLayer(layer)
             this.canvas.addWithoutUndo(layer)
-            return
+            return true
         }
 
-        val layer = this.layer ?: return
+        val layer = this.layer ?: return true
         this.canvas.removeWithoutRedo(layer)
         this.refreshLayer(layer)
         this.canvas.apply(layer)
 
         this.layer = null
         this.firstPosition = null
+        return true
     }
 
     override fun onCursorMoved() {
@@ -61,12 +64,13 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
         pixels.forEach { layer.setColor(it.x, it.y, this.canvas.currentColor) }
     }
 
-    override fun onSecondary() {
+    override fun onSecondary() : Boolean {
         this.cancel()
         val index = ShapeType.values().indexOf(this.type)
         val nextIndex = if (index == ShapeType.values().lastIndex) 0 else index + 1
         this.type = ShapeType.values()[nextIndex]
         this.onUpdateItem()
+        return true
     }
 
     override fun onCancel() {

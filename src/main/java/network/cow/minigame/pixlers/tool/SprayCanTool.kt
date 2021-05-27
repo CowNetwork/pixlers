@@ -29,11 +29,12 @@ open class SprayCanTool(canvas: Canvas) : LayerTool(canvas) {
         coordinates.filter { Math.random() <= 0.75 }.forEach { this.setColor(it.x, it.y, canvas.currentColor) }
     }
 
-    override val secondaryAction: Layer.() -> Unit = {
-        val index = sizes.indexOf(size)
-        val nextIndex = if (index == sizes.lastIndex) 0 else index + 1
-        size = sizes[nextIndex]
-        onUpdateItem()
+    override fun onSecondary() : Boolean {
+        val index = this.sizes.indexOf(size)
+        val nextIndex = if (index == this.sizes.lastIndex) 0 else index + 1
+        this.size = this.sizes[nextIndex]
+        this.onUpdateItem()
+        return true
     }
 
     override fun getItemStack(player: Player): ItemStack {

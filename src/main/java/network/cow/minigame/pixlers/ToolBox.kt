@@ -20,9 +20,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
-import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import java.awt.Point
 
@@ -86,14 +84,13 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
     private fun onInteract(event: PlayerInteractEvent) {
         val tool = this.currentTool ?: return
 
-        this.updateCursor()
-        when (event.action) {
+        val executed = when (event.action) {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> tool.executePrimary()
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> tool.executeSecondary()
-            else -> Unit
+            else -> false
         }
 
-        if (this.cursor.x < 0 || this.cursor.x >= this.canvas.width || this.cursor.y < 0 || this.cursor.y >= this.canvas.height) {
+        if (!executed && (this.cursor.x < 0 || this.cursor.x >= this.canvas.width || this.cursor.y < 0 || this.cursor.y >= this.canvas.height)) {
             val result = this.player.rayTraceBlocks(128.0)
             val block = result?.hitBlock ?: return
             val color = block.getCanvasColor() ?: return

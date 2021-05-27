@@ -15,14 +15,22 @@ import org.bukkit.inventory.ItemStack
 /**
  * @author Benedikt Wüller
  */
-class ClearTool(canvas: Canvas) : LayerTool(canvas) {
+class ClearTool(canvas: Canvas) : Tool(canvas) {
 
-    override val primaryAction: Layer.() -> Unit = {
+    private val primaryAction: Layer.() -> Unit = {
         for (y in 0 until this.height) {
             for (x in 0 until this.width) {
                 this.setColor(x, y, Canvas.BASE_COLOR)
             }
         }
+    }
+
+    override fun onPrimary(): Boolean {
+        val layer = Layer(this.canvas)
+        val init = this.primaryAction
+        layer.init()
+        this.canvas.apply(layer)
+        return true
     }
 
     override fun getItemStack(player: Player): ItemStack {

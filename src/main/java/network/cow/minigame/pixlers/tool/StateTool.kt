@@ -18,9 +18,15 @@ import org.bukkit.inventory.ItemStack
  */
 class StateTool(canvas: Canvas) : Tool(canvas) {
 
-    override fun onPrimary() = this.canvas.undo()
+    override fun onPrimary() : Boolean {
+        this.canvas.undo()
+        return true
+    }
 
-    override fun onSecondary() = this.canvas.redo()
+    override fun onSecondary() : Boolean {
+        this.canvas.redo()
+        return true
+    }
 
     override fun getItemStack(player: Player): ItemStack {
         // TODO: translate

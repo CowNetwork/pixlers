@@ -17,14 +17,19 @@ import org.bukkit.inventory.ItemStack
  */
 class ColorPickerTool(canvas: Canvas) : Tool(canvas) {
 
-    override fun onPrimary() {
-        this.canvas.currentColor = this.canvas.calculateColor(this.cursor.x, this.cursor.y) ?: return
+    override fun onPrimary() = this.execute()
+
+    override fun onSecondary() = this.execute()
+
+    private fun execute() : Boolean {
+        this.canvas.currentColor = this.canvas.calculateColor(this.cursor.x, this.cursor.y) ?: return false
+        return true
     }
 
     override fun getItemStack(player: Player): ItemStack {
         // TODO: translate
         return ItemBuilder(Material.STONE_PICKAXE)
-                .name("Farb-Auswahl ".gradient(Gradients.CORPORATE))
+                .name("Pipette".gradient(Gradients.CORPORATE))
                 .lore(
                         Component.empty(),
                         "Rechtsklicke".highlight() + " um eine Farbe auszuwählen.".info()

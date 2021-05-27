@@ -30,11 +30,12 @@ open class PaintTool(canvas: Canvas) : LayerTool(canvas) {
         coordinates.forEach { this.setColor(it.x, it.y, getColor()) }
     }
 
-    override val secondaryAction: Layer.() -> Unit = {
-        val index = sizes.indexOf(size)
-        val nextIndex = if (index == sizes.lastIndex) 0 else index + 1
-        size = sizes[nextIndex]
-        onUpdateItem()
+    override fun onSecondary() : Boolean {
+        val index = this.sizes.indexOf(size)
+        val nextIndex = if (index == this.sizes.lastIndex) 0 else index + 1
+        this.size = this.sizes[nextIndex]
+        this.onUpdateItem()
+        return true
     }
 
     protected open fun getColor() = this.canvas.currentColor

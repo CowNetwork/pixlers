@@ -22,17 +22,17 @@ abstract class Tool(protected val canvas: Canvas) {
 
     protected open fun onCursorMoved() = Unit
 
-    fun executePrimary() {
-        this.onPrimary()
+    fun executePrimary() : Boolean {
+        return this.onPrimary()
     }
 
-    protected abstract fun onPrimary()
+    protected abstract fun onPrimary() : Boolean
 
-    fun executeSecondary() {
-        this.onSecondary()
+    fun executeSecondary() : Boolean {
+        return this.onSecondary()
     }
 
-    protected open fun onSecondary() = Unit
+    protected open fun onSecondary() : Boolean = false
 
     fun cancel() = this.onCancel()
 
