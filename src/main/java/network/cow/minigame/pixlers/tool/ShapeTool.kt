@@ -85,6 +85,7 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
             ShapeType.LINE -> Material.DIAMOND_HOE
             ShapeType.RECTANGLE -> Material.STONE_HOE
             ShapeType.ELLIPSE -> Material.GOLDEN_HOE
+            ShapeType.DONGUS -> Material.NETHERITE_HOE
         }
         
         return ItemBuilder(material)
