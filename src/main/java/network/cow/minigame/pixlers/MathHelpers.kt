@@ -8,31 +8,36 @@ import kotlin.math.roundToInt
  * @author Benedikt Wüller
  */
 
-fun getPointsInCircle(center: Point, diameter: Int) = getPointsInEllipse(center, diameter, diameter)
+val circlePatterns = mapOf(
+        1 to arrayOf(
+                Point(0, 0)
+        ),
+        2 to arrayOf(
+                Point(0, 0), Point(1, 0),
+                Point(0, 1), Point(1, 1)
+        ),
+        3 to arrayOf(
+                Point(-1, -1), Point(0, -1), Point(1, -1),
+                Point(-1, 0), Point(0, 0), Point(1, 0),
+                Point(-1, 1), Point(0, 1), Point(1, 1)
+        ),
+        4 to arrayOf(
+                Point(0, -1), Point(1, -1),
+                Point(-1, 0), Point(0, 0), Point(1, 0), Point(2, 0),
+                Point(-1, 1), Point(0, 1), Point(1, 1), Point(2, 1),
+                Point(0, 2), Point(1, 2),
+        ),
+        5 to arrayOf(
+                Point(-1, -2), Point(0, -2), Point(1, -2),
+                Point(-2, -1), Point(-1, -1), Point(0, -1), Point(1, -1), Point(2, -1),
+                Point(-2, 0), Point(-1, 0), Point(0, 0), Point(1, 0), Point(2, 0),
+                Point(-2, 1), Point(-1, 1), Point(0, 1), Point(1, 1), Point(2, 1),
+                Point(-1, 2), Point(0, 2), Point(1, 2),
+        )
+)
 
-fun getPointsInEllipse(center: Point, horizontalDiameter: Int, verticalDiameter: Int) : List<Point> {
-    // https://stackoverflow.com/a/10322607/1690664
-
-    val points = mutableListOf<Point>()
-
-    val verticalRadius = verticalDiameter / 2.0
-    val horizontalRadius = horizontalDiameter / 2.0
-
-    val squaredVerticalRadius = verticalRadius.pow(2)
-    val squaredHorizontalRadius = horizontalRadius.pow(2)
-
-    for (y in 0 until verticalDiameter) {
-        for (x in 0 until horizontalDiameter) {
-            val squaredX = (x - horizontalRadius).pow(2)
-            val squaredY = (y - verticalRadius).pow(2)
-            if (squaredX * squaredVerticalRadius + squaredY * squaredHorizontalRadius <= squaredVerticalRadius * squaredHorizontalRadius) {
-                points.add(Point(
-                        (center.x - horizontalRadius + x).roundToInt(),
-                        (center.y - verticalRadius + y).roundToInt()
-                ))
-            }
-        }
-    }
-
-    return points
+fun getPointsInCircle(center: Point, diameter: Int) : Set<Point> {
+    // TODO: Use Ellipsis2D for larger circles.
+    val pattern = circlePatterns[diameter] ?: return emptySet()
+    return pattern.map { Point(center.x + it.x, center.y + it.y) }.toSet()
 }

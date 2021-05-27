@@ -7,6 +7,6 @@ import java.awt.Point
  */
 interface Shape {
 
-    fun calculatePixels(from: Point, to: Point) : List<Point>
+    fun calculatePixels(from: Point, to: Point) : Set<Point>
 
 }

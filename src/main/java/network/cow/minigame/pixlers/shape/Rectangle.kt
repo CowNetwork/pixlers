@@ -7,8 +7,8 @@ import java.awt.Point
  */
 class Rectangle : Shape {
 
-    override fun calculatePixels(from: Point, to: Point) : List<Point> {
-        val points = mutableListOf<Point>()
+    override fun calculatePixels(from: Point, to: Point) : Set<Point> {
+        val points = mutableSetOf<Point>()
 
         val minX = minOf(from.x, to.x)
         val maxX = maxOf(from.x, to.x)

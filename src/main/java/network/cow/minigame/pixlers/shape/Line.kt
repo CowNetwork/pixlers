@@ -8,8 +8,8 @@ import kotlin.math.abs
  */
 class Line : Shape {
 
-    override fun calculatePixels(from: Point, to: Point) : List<Point> {
-        val points = mutableListOf<Point>()
+    override fun calculatePixels(from: Point, to: Point) : Set<Point> {
+        val points = mutableSetOf<Point>()
 
         var x = from.x
         var y = from.y

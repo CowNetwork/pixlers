@@ -50,6 +50,7 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
     }
 
     override fun onCursorMoved() {
+        if (this.cursor.x < 0 || this.cursor.x >= this.canvas.width || this.cursor.y < 0 || this.cursor.y >= this.canvas.height) return
         val layer = this.layer ?: return
         this.canvas.removeWithoutRedo(layer)
         this.refreshLayer(layer)
