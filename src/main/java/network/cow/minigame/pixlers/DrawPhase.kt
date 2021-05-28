@@ -17,9 +17,7 @@ class DrawPhase(game: Game<Player>, config: PhaseConfig<Player>) : SpigotPhase(g
 
     private val toolboxes = mutableMapOf<Player, ToolBox>()
 
-    override fun onPlayerJoin(player: Player) {
-        // TODO
-    }
+    override fun onPlayerJoin(player: Player) = Unit
 
     override fun onPlayerLeave(player: Player) {
         this.toolboxes.remove(player)?.remove()
@@ -27,10 +25,11 @@ class DrawPhase(game: Game<Player>, config: PhaseConfig<Player>) : SpigotPhase(g
 
     override fun onStart() {
         // TODO: spawn location relative to plot
-        val location = Location((this.game as SpigotGame).world, 0.5, 95.0, 45.5)
+        val location = Location((this.game as SpigotGame).world, 0.5, 95.0, 45.5, 180.0F, 0.0F)
         Bukkit.getOnlinePlayers().forEach { it.teleport(location) }
 
         this.game.getIngamePlayers().forEach {
+            // TODO: canvas relative to plot
             val canvas = BlockCanvas(it.world.getBlockAt(-38, 113, -15), BlockFace.SOUTH, 80, 40)
             val toolbox = ToolBox(it, canvas)
             toolbox.apply()
@@ -40,11 +39,10 @@ class DrawPhase(game: Game<Player>, config: PhaseConfig<Player>) : SpigotPhase(g
     }
 
     override fun onStop() {
-        // TODO
+        this.toolboxes.values.forEach { it.remove() }
+        this.toolboxes.clear()
     }
 
-    override fun onTimeout() {
-        // TODO
-    }
+    override fun onTimeout() = Unit
 
 }

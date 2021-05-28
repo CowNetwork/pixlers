@@ -1,5 +1,9 @@
 package network.cow.minigame.pixlers
 
+import network.cow.messages.adventure.component
+import network.cow.messages.adventure.corporate
+import network.cow.messages.adventure.info
+import network.cow.messages.adventure.plus
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.canvas.CompoundCanvas
@@ -44,6 +48,7 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
     private var cursor = Point(-1, -1)
 
     private lateinit var task: BukkitTask
+    private var tick: Long = 0
 
     fun apply() {
         val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
@@ -62,7 +67,7 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
         }
 
         this.currentTool = this.tools.getOrNull(this.player.inventory.heldItemSlot)
-        this.task = Bukkit.getScheduler().runTaskTimer(plugin, this::updateCursor, 1L, 1L)
+        this.task = Bukkit.getScheduler().runTaskTimer(plugin, this::updateTools, 1L, 1L)
     }
 
     fun remove() {
@@ -98,7 +103,7 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
         }
     }
 
-    private fun updateCursor() {
+    private fun updateTools() {
         val result = this.player.rayTraceBlocks(128.0)
         val block = result?.hitBlock
 
@@ -112,6 +117,13 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
         }
 
         this.tools.forEach { it.updateCursor(point.x, point.y) }
+
+        if (this.tick % 4L == 0L) {
+            // TODO: translate
+            this.player.sendActionBar("Farbe: ".corporate() + "████".component(this.canvas.currentColor.color))
+        }
+
+        this.tick += 1
     }
 
 }

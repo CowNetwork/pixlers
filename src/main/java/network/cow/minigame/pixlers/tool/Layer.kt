@@ -15,7 +15,6 @@ class Layer(private val canvas: Canvas) {
 
     fun setColor(x: Int, y: Int, color: CanvasColor) {
         if (x < 0 || x >= this.canvas.width || y < 0 || y >= this.canvas.height) return
-//        if (color == this.getColor(x, y)) return
         this.changes[x to y] = color
     }
 
@@ -30,6 +29,17 @@ class Layer(private val canvas: Canvas) {
 
     fun getChange(x: Int, y: Int) = this.changes[x to y]
 
+    fun cleanup() {
+        val keys = this.changes.entries.filter { (coords, color) ->
+            this.canvas.calculateColor(coords.first, coords.second) == color
+        }.map {
+            it.key
+        }
+        keys.forEach(this.changes::remove)
+    }
+
     fun clear() = this.changes.clear()
+
+    fun isEmpty() = this.changes.isEmpty()
 
 }

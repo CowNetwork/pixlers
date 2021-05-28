@@ -13,13 +13,22 @@ abstract class Canvas(val width: Int, val height: Int) {
         val BASE_COLOR = CanvasColor.WHITE
     }
 
+    init {
+        (0 until height).forEach { y ->
+            (0 until width).forEach { x ->
+                this.drawColor(x, y, CanvasColor.WHITE)
+            }
+        }
+    }
+
     private val redoLayers = Stack<Layer>()
     private val layers = Stack<Layer>()
 
     var currentColor = BASE_COLOR
 
     fun apply(layer: Layer) {
-        if (layer.getChanges().isEmpty()) return
+        layer.cleanup()
+        if (layer.isEmpty()) return
         this.layers.add(layer)
         this.redoLayers.clear()
         this.refresh(layer)
@@ -42,7 +51,8 @@ abstract class Canvas(val width: Int, val height: Int) {
     }
 
     internal fun addWithoutUndo(layer: Layer) {
-        if (layer.getChanges().isEmpty()) return
+        layer.cleanup()
+        if (layer.isEmpty()) return
         this.layers.add(layer)
         this.refresh(layer)
     }
