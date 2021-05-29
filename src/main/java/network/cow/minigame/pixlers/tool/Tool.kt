@@ -12,7 +12,7 @@ abstract class Tool(protected val canvas: Canvas) {
 
     protected val cursor = Point(-1, -1)
 
-    var onUpdateItem: () -> Unit = {}
+    var onUpdateItem: (() -> Unit)? = null
 
     fun updateCursor(x: Int, y: Int) {
         this.cursor.x = x
@@ -22,15 +22,11 @@ abstract class Tool(protected val canvas: Canvas) {
 
     protected open fun onCursorMoved() = Unit
 
-    fun executePrimary() : Boolean {
-        return this.onPrimary()
-    }
+    fun executePrimary() : Boolean = this.onPrimary()
 
     protected abstract fun onPrimary() : Boolean
 
-    fun executeSecondary() : Boolean {
-        return this.onSecondary()
-    }
+    fun executeSecondary() : Boolean = this.onSecondary()
 
     protected open fun onSecondary() : Boolean = false
 

@@ -65,8 +65,7 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
     fun remove() {
         HandlerList.unregisterAll(this)
         this.task.cancel()
-
-        this.tools.forEach { it.onUpdateItem = {} }
+        this.tools.forEach { it.onUpdateItem = null }
         this.player.inventory.clear()
     }
 

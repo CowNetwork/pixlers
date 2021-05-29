@@ -32,17 +32,17 @@ abstract class Canvas(val width: Int, val height: Int) {
     }
 
     fun undo() {
+        println(this.layers.size)
         if (this.layers.isEmpty()) return
         val layer = this.layers.pop()
-        this.layers.remove(layer)
         this.redoLayers.add(layer)
         this.refresh(layer)
     }
 
     fun redo() {
+        println(this.layers.size)
         if (this.redoLayers.isEmpty()) return
         val layer = this.redoLayers.pop()
-        this.redoLayers.remove(layer)
         this.layers.add(layer)
         this.refresh(layer)
     }

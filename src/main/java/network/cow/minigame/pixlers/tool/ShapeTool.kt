@@ -74,7 +74,7 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
         val index = ShapeType.values().indexOf(this.type)
         val nextIndex = if (index == ShapeType.values().lastIndex) 0 else index + 1
         this.type = ShapeType.values()[nextIndex]
-        this.onUpdateItem()
+        this.onUpdateItem?.let { it() }
         return true
     }
 

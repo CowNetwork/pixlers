@@ -34,7 +34,7 @@ open class PaintTool(canvas: Canvas) : LayerTool(canvas) {
         val index = this.sizes.indexOf(size)
         val nextIndex = if (index == this.sizes.lastIndex) 0 else index + 1
         this.size = this.sizes[nextIndex]
-        this.onUpdateItem()
+        this.onUpdateItem?.let { it() }
         return true
     }
 
