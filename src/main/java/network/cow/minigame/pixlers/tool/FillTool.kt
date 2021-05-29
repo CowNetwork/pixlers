@@ -21,14 +21,14 @@ class FillTool(canvas: Canvas) : LayerTool(canvas) {
 
     override val primaryAction: (Layer.() -> Unit) = {
         val pixels = mutableSetOf<Int>()
-        val queue = LinkedList<Point>()
-        queue.push(cursor)
+        val queue = LinkedList<Int>()
+        queue.push(cursor.y * this.width + cursor.x)
 
         val replaceColor = this.getColor(cursor.x, cursor.y)
         do {
             val coords = queue.pop()
-            val x = coords.x
-            val y = coords.y
+            val x = coords % this.width
+            val y = coords / this.width
 
             val color = this.getColor(x, y)
             if (color != replaceColor) continue
@@ -38,8 +38,12 @@ class FillTool(canvas: Canvas) : LayerTool(canvas) {
 
             listOf(Point(x - 1, y), Point(x + 1, y), Point(x, y - 1), Point(x, y + 1))
                     .filter { it.x >= 0 && it.x < this.width && it.y >= 0 && it.y < this.height }
-                    .filterNot { pixels.contains(it.y * this.width + it.x) }
-                    .forEach { queue.add(it) }
+                    .map { it.y * this.width + it.x }
+                    .filterNot { pixels.contains(it) }
+                    .forEach {
+                        if (queue.contains(it)) return@forEach
+                        queue.add(it)
+                    }
         } while (queue.isNotEmpty())
     }
 
