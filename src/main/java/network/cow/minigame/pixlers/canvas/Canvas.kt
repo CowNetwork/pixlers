@@ -13,25 +13,22 @@ abstract class Canvas(val width: Int, val height: Int) {
         val BASE_COLOR = CanvasColor.WHITE
     }
 
-    init {
-        (0 until height).forEach { y ->
-            (0 until width).forEach { x ->
-                this.drawColor(x, y, CanvasColor.WHITE)
-            }
-        }
-    }
-
     private val redoLayers = Stack<Layer>()
     private val layers = Stack<Layer>()
+    private var overlay: Layer? = null
 
     var currentColor = BASE_COLOR
 
     fun apply(layer: Layer) {
-        layer.cleanup()
+        if (layer.isEmpty()) return
+        this.applyWithoutRefresh(layer)
+        this.refresh(layer)
+    }
+
+    fun applyWithoutRefresh(layer: Layer) {
         if (layer.isEmpty()) return
         this.layers.add(layer)
         this.redoLayers.clear()
-        this.refresh(layer)
     }
 
     fun undo() {
@@ -50,16 +47,25 @@ abstract class Canvas(val width: Int, val height: Int) {
         this.refresh(layer)
     }
 
-    internal fun addWithoutUndo(layer: Layer) {
-        layer.cleanup()
+    fun setOverlay(layer: Layer) {
         if (layer.isEmpty()) return
-        this.layers.add(layer)
+
+        val difference = this.overlay?.calculateDifference(layer) ?: layer.getChanges()
+        this.overlay = layer
+
+        difference.keys.forEach { this.refresh(it.x, it.y) }
+    }
+
+    fun removeOverlay() {
+        val layer = this.overlay ?: return
+        this.overlay = null
         this.refresh(layer)
     }
 
-    internal fun removeWithoutRedo(layer: Layer) {
-        this.layers.remove(layer)
-        this.refresh(layer)
+    fun bakeOverlay() {
+        val layer = this.overlay ?: return
+        this.overlay = null
+        this.applyWithoutRefresh(layer)
     }
 
     fun refresh() {
@@ -70,10 +76,10 @@ abstract class Canvas(val width: Int, val height: Int) {
         }
     }
 
-    private fun refresh(layer: Layer) = layer.getChanges().keys.forEach { (x, y) -> this.refresh(x, y) }
+    private fun refresh(layer: Layer) = layer.getChanges().keys.forEach { this.refresh(it.x, it.y) }
 
     private fun refresh(x: Int, y: Int) {
-        val color = this.calculateColor(x, y)!!
+        val color = this.overlay?.getColor(x, y) ?: this.calculateColor(x, y)!!
         this.drawColor(x, y, color)
     }
 

@@ -32,17 +32,15 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
         if (this.firstPosition == null) {
             this.firstPosition = Point(this.cursor.x, this.cursor.y)
 
-            val layer = Layer(this.canvas)
+            val layer = this.refreshLayer()
             this.layer = layer
-            this.refreshLayer(layer)
-            this.canvas.addWithoutUndo(layer)
+            this.canvas.setOverlay(layer)
             return true
         }
 
-        val layer = this.layer ?: return true
-        this.canvas.removeWithoutRedo(layer)
-        this.refreshLayer(layer)
-        this.canvas.apply(layer)
+        val layer = this.refreshLayer()
+        this.canvas.setOverlay(layer)
+        this.canvas.bakeOverlay()
 
         this.layer = null
         this.firstPosition = null
@@ -51,18 +49,24 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
 
     override fun onCursorMoved() {
         if (this.cursor.x < 0 || this.cursor.x >= this.canvas.width || this.cursor.y < 0 || this.cursor.y >= this.canvas.height) return
-        val layer = this.layer ?: return
-        this.canvas.removeWithoutRedo(layer)
-        this.refreshLayer(layer)
-        this.canvas.addWithoutUndo(layer)
+
+        val currentLayer = this.layer ?: return
+        val layer = this.refreshLayer()
+        if (currentLayer == layer) return
+
+        this.layer = layer
+        this.canvas.setOverlay(layer)
+
+        currentLayer.clear()
     }
 
-    private fun refreshLayer(layer: Layer) {
-        layer.clear()
-        val from = this.firstPosition ?: return
+    private fun refreshLayer() : Layer {
+        val layer = Layer(this.canvas)
+        val from = this.firstPosition ?: return layer
         val to = Point(this.cursor.x, this.cursor.y)
         val pixels = this.type.shape.calculatePixels(from, to)
         pixels.forEach { layer.setColor(it.x, it.y, this.canvas.currentColor) }
+        return layer
     }
 
     override fun onSecondary() : Boolean {
@@ -76,7 +80,7 @@ class ShapeTool(canvas: Canvas) : Tool(canvas) {
 
     override fun onCancel() {
         this.firstPosition = null
-        this.layer?.let { this.canvas.removeWithoutRedo(it) }
+        this.layer?.let { this.canvas.removeOverlay() }
     }
 
     override fun getItemStack(player: Player): ItemStack {

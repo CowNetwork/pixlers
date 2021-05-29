@@ -27,7 +27,6 @@ class Line : Shape {
 
         if (deltaX >= deltaY) {
             while (true) {
-                println(Point(x, y))
                 points.add(Point(x, y))
                 if (x == to.x) break
                 x += incrementX
@@ -39,7 +38,6 @@ class Line : Shape {
             }
         } else {
             while (true) {
-                println(Point(x, y))
                 points.add(Point(x, y))
                 if (y == to.y) break
                 y += incrementY

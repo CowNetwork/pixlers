@@ -23,6 +23,10 @@
             <id>cow</id>
             <url>https://maven.cow.network/internal</url>
         </repository>
+        <repository>
+            <id>enginehub-maven</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -44,7 +48,6 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>network.cow.minigame</groupId>
             <artifactId>noma-spigot</artifactId>

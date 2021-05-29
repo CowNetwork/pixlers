@@ -1,21 +1,13 @@
-package network.cow.minigame.pixlers
+package network.cow.minigame.pixlers.tool
 
 import network.cow.messages.adventure.component
 import network.cow.messages.adventure.corporate
-import network.cow.messages.adventure.info
 import network.cow.messages.adventure.plus
+import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.canvas.CompoundCanvas
-import network.cow.minigame.pixlers.tool.ClearTool
-import network.cow.minigame.pixlers.tool.ColorPickerTool
-import network.cow.minigame.pixlers.tool.EraseTool
-import network.cow.minigame.pixlers.tool.FillTool
-import network.cow.minigame.pixlers.tool.PaintTool
-import network.cow.minigame.pixlers.tool.ShapeTool
-import network.cow.minigame.pixlers.tool.SprayCanTool
-import network.cow.minigame.pixlers.tool.StateTool
-import network.cow.minigame.pixlers.tool.Tool
+import network.cow.minigame.pixlers.getCanvasColor
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

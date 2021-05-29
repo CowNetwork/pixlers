@@ -40,8 +40,6 @@ class FillTool(canvas: Canvas) : LayerTool(canvas) {
                     .filter { it.x >= 0 && it.x < this.width && it.y >= 0 && it.y < this.height }
                     .filterNot { pixels.contains(it.y * this.width + it.x) }
                     .forEach { queue.add(it) }
-
-            if (queue.size > 10000) break
         } while (queue.isNotEmpty())
     }
 
