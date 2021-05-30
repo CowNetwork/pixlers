@@ -19,7 +19,7 @@ import java.awt.Point
 /**
  * @author Benedikt Wüller
  */
-class ShapeTool(canvas: Canvas) : Tool(canvas) {
+class ShapeTool(canvas: Canvas) : Tool(canvas), WithLiveCursorUpdates {
 
     var type: ShapeType = ShapeType.LINE; private set
 

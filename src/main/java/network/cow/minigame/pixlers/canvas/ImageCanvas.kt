@@ -11,8 +11,8 @@ class ImageCanvas(width: Int, height: Int) : Canvas(width, height) {
     private val image = BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB)
 
     init {
-        (0 until height).forEach { y ->
-            (0 until width).forEach { x ->
+        (0 until this.height).forEach { y ->
+            (0 until this.width).forEach { x ->
                 this.drawColor(x, y, CanvasColor.WHITE)
             }
         }

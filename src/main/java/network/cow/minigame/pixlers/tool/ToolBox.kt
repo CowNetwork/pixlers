@@ -23,7 +23,7 @@ import java.awt.Point
 /**
  * @author Benedikt Wüller
  */
-class ToolBox(private val player: Player, private val canvas: Canvas) : Listener {
+class ToolBox(private val player: Player, val canvas: Canvas) : Listener {
 
     private val tools = listOf(
             ColorPickerTool(this.canvas),
@@ -80,6 +80,7 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
     private fun onInteract(event: PlayerInteractEvent) {
         val tool = this.currentTool ?: return
 
+        this.updateCursor()
         val executed = when (event.action) {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> tool.executePrimary()
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> tool.executeSecondary()
@@ -87,7 +88,7 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
         }
 
         if (!executed && (this.cursor.x < 0 || this.cursor.x >= this.canvas.width || this.cursor.y < 0 || this.cursor.y >= this.canvas.height)) {
-            val result = this.player.rayTraceBlocks(128.0)
+            val result = this.player.rayTraceBlocks(200.0)
             val block = result?.hitBlock ?: return
             val color = block.getCanvasColor() ?: return
             this.canvas.currentColor = color
@@ -95,19 +96,9 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
     }
 
     private fun updateTools() {
-        val result = this.player.rayTraceBlocks(128.0)
-        val block = result?.hitBlock
-
-        val point: Point = when {
-            block != null -> when (this.canvas) {
-                is BlockCanvas -> this.canvas.getPoint(block)
-                is CompoundCanvas -> (this.canvas.canvases.firstOrNull { it is BlockCanvas } as? BlockCanvas)?.getPoint(block) ?: Point(-1, -1)
-                else -> Point(-1, -1)
-            }
-            else -> Point(-1, -1)
+        if (this.currentTool is WithLiveCursorUpdates) {
+            this.updateCursor()
         }
-
-        this.tools.forEach { it.updateCursor(point.x, point.y) }
 
         if (this.tick % 4L == 0L) {
             // TODO: translate
@@ -115,6 +106,16 @@ class ToolBox(private val player: Player, private val canvas: Canvas) : Listener
         }
 
         this.tick += 1
+    }
+
+    private fun updateCursor() {
+        val point = when (this.canvas) {
+            is BlockCanvas -> this.canvas.calculatePointOnCanvas(this.player)
+            is CompoundCanvas -> (this.canvas.canvases.firstOrNull { it is BlockCanvas } as? BlockCanvas)?.calculatePointOnCanvas(this.player)
+            else -> null
+        } ?: Point(-1, -1)
+
+        this.tools.forEach { it.updateCursor(point.x, point.y) }
     }
 
 }

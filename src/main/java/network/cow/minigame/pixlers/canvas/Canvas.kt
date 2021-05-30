@@ -32,7 +32,6 @@ abstract class Canvas(val width: Int, val height: Int) {
     }
 
     fun undo() {
-        println(this.layers.size)
         if (this.layers.isEmpty()) return
         val layer = this.layers.pop()
         this.redoLayers.add(layer)
@@ -40,7 +39,6 @@ abstract class Canvas(val width: Int, val height: Int) {
     }
 
     fun redo() {
-        println(this.layers.size)
         if (this.redoLayers.isEmpty()) return
         val layer = this.redoLayers.pop()
         this.layers.add(layer)
