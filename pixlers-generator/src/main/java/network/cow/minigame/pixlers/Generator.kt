@@ -34,7 +34,7 @@ fun main() {
     targetModels.mkdirs()
     targetTextures.mkdirs()
 
-    val palette = ImageIO.read(File("./pixlers-game/src/main/resources/palette.png"))
+    val palette = ImageIO.read(File("./pixlers-game/src/main/resources/full_palette.png"))
     val blockStates = mutableListOf<Pair<String, String>>()
 
     repeat(palette.width) { x ->

@@ -15,8 +15,10 @@ import kotlin.math.roundToInt
 /**
  * @author Benedikt Wüller
  */
-class BlockCanvas(private val origin: Block, private val facing: BlockFace, width: Int, height: Int, vararg players: Player, palette: ColorPalette)
-    : Canvas(width, height, palette) {
+class BlockCanvas(
+    private val origin: Block, private val facing: BlockFace, width: Int, height: Int,
+    vararg players: Player, palette: ColorPalette, val isVirtual: Boolean = true
+) : Canvas(width, height, palette) {
 
     companion object {
         private const val MAX_RAY_TRACING_DISTANCE = 200.0
@@ -53,9 +55,14 @@ class BlockCanvas(private val origin: Block, private val facing: BlockFace, widt
     private fun drawColor(x: Int, y: Int, color: Int, vararg players: Player) {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) error("The coordinates are out of bounds. Coordinates: ${x}x$y, Dimensions: ${this.width}x${this.height}")
         val block = this.origin.getRelative(this.blockFaceX, x).getRelative(BlockFace.DOWN, y)
-        val data = Bukkit.createBlockData(Material.NOTE_BLOCK) as NoteBlock
-        this.palette.applyBlockData(color, data)
-        players.forEach { it.sendBlockChange(block.location, data) }
+
+        if (this.isVirtual) {
+            val data = Bukkit.createBlockData(Material.NOTE_BLOCK) as NoteBlock
+            this.palette.applyBlockData(color, data)
+            players.forEach { it.sendBlockChange(block.location, data) }
+        } else {
+            this.palette.setBlock(color, block)
+        }
     }
 
     fun calculatePointOnCanvas(player: Player): Point? {

@@ -1,5 +1,6 @@
 package network.cow.minigame.pixlers
 
+import com.google.common.collect.HashBiMap
 import org.bukkit.Instrument
 import org.bukkit.Material
 import org.bukkit.Note
@@ -15,7 +16,7 @@ class ColorPalette(type: Type) {
 
     companion object {
         // This is required, because instruments are not named like in vanilla and therefore
-        // can not be sorted alphabetically.
+        // can not be sorted alphabetically (as they would result in a different order).
         private val INSTRUMENTS = listOf(
             Instrument.BANJO,
             Instrument.BASS_DRUM,
@@ -38,21 +39,31 @@ class ColorPalette(type: Type) {
         const val STORE_KEY = "pixlers.color_palette"
     }
 
+    private val colors = HashBiMap.create<Int, Int>()
+
+    private val fullPalette = ImageIO.read(this.javaClass.classLoader.getResourceAsStream(Type.FULL.fileName))
     private val image = ImageIO.read(this.javaClass.classLoader.getResourceAsStream(type.fileName))
 
     val baseColor: Int = this.image.width - 2
     val initialColor: Int = this.image.height * this.image.width - 1
 
+    init {
+        repeat(this.fullPalette.width) { x ->
+            repeat(this.fullPalette.height) { y ->
+                this.colors[this.fullPalette.getRGB(x, y)] to (y * this.fullPalette.width + x)
+            }
+        }
+    }
+
     fun draw(from: Block, size: Int = 3) {
         repeat(this.image.width) { baseX ->
             repeat(this.image.height) inner@{ baseY ->
-                val color = Color(image.getRGB(baseX, baseY))
-                if (color.alpha < 255) return@inner
+                val index = this.colors[this.image.getRGB(baseX, baseY)] ?: return@inner
                 repeat(size) { deltaX ->
                     repeat(size) { deltaY ->
                         val x = baseX * size + deltaX
                         val y = baseY * size + deltaY
-                        this.applyBlockData(baseY * this.image.width + baseX, from.getRelative(x, 0, y))
+                        this.setBlock(index, from.getRelative(x, 0, y))
                     }
                 }
             }
@@ -60,8 +71,15 @@ class ColorPalette(type: Type) {
     }
 
     fun getBlockData(index: Int) : Triple<Instrument, Boolean, Note> {
-        val column = index % this.image.width
-        val row = index / this.image.width
+        val x = index % this.image.width
+        val y = index / this.image.width
+
+        val color = this.image.getRGB(x, y)
+        val realIndex = this.colors[color] ?: error("Color at ${x}x$y does not exist on the full palette.")
+
+        val column = realIndex % this.fullPalette.width
+        val row = realIndex / this.fullPalette.width
+
         val instrument = INSTRUMENTS[column % INSTRUMENTS.size]
         val isPowered = column >= INSTRUMENTS.size
         val note = Note(row)
@@ -76,7 +94,7 @@ class ColorPalette(type: Type) {
         }
     }
 
-    fun applyBlockData(index: Int, block: Block) {
+    fun setBlock(index: Int, block: Block) {
         block.setType(Material.NOTE_BLOCK, false)
         val data = block.blockData as NoteBlock
         this.getBlockData(index).let {
@@ -93,15 +111,16 @@ class ColorPalette(type: Type) {
         return Color(this.image.getRGB(x, y))
     }
 
-    fun getIndex(data: NoteBlock) : Int {
+    fun getIndex(data: NoteBlock): Int {
         var column = INSTRUMENTS.indexOf(data.instrument)
         if (data.isPowered) column += INSTRUMENTS.size
-        val row = data.note.id
-        return row * this.image.width + column
+        val row = data.note.id.toInt()
+        val rgb = this.image.getRGB(column, row)
+        return colors[rgb] ?: error("Color at ${column}x$row does not exist on the full palette.")
     }
 
     enum class Type(val fileName: String) {
-        FULL("palette.png")
+        FULL("full_palette.png")
     }
 
 }

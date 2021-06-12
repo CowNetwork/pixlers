@@ -2,10 +2,11 @@ package network.cow.minigame.pixlers.phase
 
 import com.google.common.collect.HashBiMap
 import network.cow.messages.adventure.corporate
-import network.cow.minigame.noma.api.actor.Actor
 import network.cow.minigame.noma.api.config.PhaseConfig
+import network.cow.minigame.noma.spigot.SpigotActor
 import network.cow.minigame.noma.spigot.SpigotCountdownTimer
 import network.cow.minigame.noma.spigot.SpigotGame
+import network.cow.minigame.noma.spigot.phase.EndPhase
 import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
@@ -32,9 +33,9 @@ import kotlin.math.roundToInt
 class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : SpigotPhase(game, config) {
 
     private lateinit var canvases: List<BlockCanvas>
-    private val drawings: Queue<Pair<Actor<Player>, Canvas>> = LinkedList()
+    private val drawings: Queue<Pair<SpigotActor, Canvas>> = LinkedList()
 
-    private val canvasActors = mutableMapOf<Canvas, Actor<Player>>()
+    private val canvasActors = mutableMapOf<Canvas, SpigotActor>()
     private val canvasMappings = HashBiMap.create<Canvas, BlockCanvas>()
     private val selections = mutableMapOf<Player, Canvas>()
 
@@ -60,7 +61,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
         val world = this.game.world
 
-        val drawings = this.game.store.get<List<Pair<Actor<Player>, Canvas>>>(Store.STORE_KEY_DRAWINGS) ?: emptyList()
+        val drawings = this.game.store.get<List<Pair<SpigotActor, Canvas>>>(Store.STORE_KEY_DRAWINGS) ?: emptyList()
         this.drawings.addAll(drawings.shuffled())
 
         val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
@@ -68,9 +69,9 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             val players = Bukkit.getOnlinePlayers().toTypedArray()
 
             this.canvases = listOf(
-                    BlockCanvas(world.getBlockAt(168, 192, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette),
-                    BlockCanvas(world.getBlockAt(259, 192, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette),
-                    BlockCanvas(world.getBlockAt(214, 143, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette),
+                    BlockCanvas(world.getBlockAt(168, 192, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette, isVirtual = false),
+                    BlockCanvas(world.getBlockAt(259, 192, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette, isVirtual = false),
+                    BlockCanvas(world.getBlockAt(214, 143, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette, isVirtual = false),
             )
 
             this.game.getIngamePlayers().forEach {
@@ -86,9 +87,9 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.particleTask = Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
             this.selections.forEach { (player, canvas) ->
                 val mappedCanvas = this.canvasMappings[canvas] ?: return@forEach
-                val boundingBox = mappedCanvas.boundingBox.clone().expand(0.25)
+                val boundingBox = mappedCanvas.boundingBox.clone().expand(0.5)
 
-                val particlesPerBlock = 4
+                val particlesPerBlock = 3
                 val particlesX = (boundingBox.widthX * particlesPerBlock).roundToInt()
                 val particlesY = (boundingBox.height * particlesPerBlock).roundToInt()
                 val particlesZ = (boundingBox.widthZ * particlesPerBlock).roundToInt()
@@ -191,7 +192,8 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         }
 
         if (this.drawings.isNotEmpty()) {
-//            this.storeMiddleware.store(EndPhase.STORE_KEY, listOf(this.drawings.first().first))
+            val result = EndPhase.Result(listOf(setOf(this.drawings.first().first)))
+            this.storeMiddleware.store(EndPhase.STORE_KEY, result)
         }
     }
 

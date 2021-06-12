@@ -1,7 +1,7 @@
 package network.cow.minigame.pixlers.phase
 
-import network.cow.minigame.noma.api.actor.Actor
 import network.cow.minigame.noma.api.config.PhaseConfig
+import network.cow.minigame.noma.spigot.SpigotActor
 import network.cow.minigame.noma.spigot.SpigotGame
 import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.pixlers.ColorPalette
@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffectType
  */
 class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : SpigotPhase(game, config) {
 
-    private val canvases = mutableMapOf<Actor<Player>, Canvas>()
+    private val canvases = mutableMapOf<SpigotActor, Canvas>()
     private val toolboxes = mutableMapOf<Player, ToolBox>()
 
     override fun onPlayerJoin(player: Player) {
@@ -39,7 +39,7 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         val palette = this.game.store.get(ColorPalette.STORE_KEY) ?: ColorPalette(ColorPalette.Type.FULL)
         palette.draw(this.game.world.getBlockAt(-39, 70, -12))
 
-        this.game.getActors().forEach {
+        this.game.getSpigotActors().forEach {
             // TODO: read location from world config
             this.canvases[it] = BlockCanvas(
                 this.game.world.getBlockAt(-38, 113, -15),
@@ -48,6 +48,8 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
                 *it.getPlayers().toTypedArray(),
                 palette = palette
             )
+
+            it.apply { player -> player.isInvisible = true }
         }
 
         this.game.getIngamePlayers().forEach {
@@ -58,12 +60,6 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             toolbox.apply()
             this.toolboxes[it] = toolbox
         }
-
-        this.game.getSpigotActors().forEach {
-            it.apply { player ->
-                player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 1, true, false, false))
-            }
-        }
     }
 
     override fun onStop() {
@@ -72,7 +68,7 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.toolboxes.values.forEach { it.remove() }
         this.toolboxes.clear()
 
-        Bukkit.getOnlinePlayers().forEach { it.removePotionEffect(PotionEffectType.INVISIBILITY) }
+        Bukkit.getOnlinePlayers().forEach { it.isInvisible = false }
     }
 
     override fun onTimeout() = Unit
