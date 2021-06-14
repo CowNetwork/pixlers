@@ -35,8 +35,6 @@ class ColorPalette(type: Type) {
             Instrument.SNARE_DRUM,
             Instrument.XYLOPHONE
         )
-
-        const val STORE_KEY = "pixlers.color_palette"
     }
 
     private val colors = HashBiMap.create<Int, Int>()

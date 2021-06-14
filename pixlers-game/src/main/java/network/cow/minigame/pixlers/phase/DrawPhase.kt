@@ -1,11 +1,18 @@
 package network.cow.minigame.pixlers.phase
 
+import net.kyori.adventure.title.Title
+import network.cow.messages.adventure.gradient
+import network.cow.messages.adventure.highlight
+import network.cow.messages.adventure.info
+import network.cow.messages.core.Gradients
 import network.cow.minigame.noma.api.config.PhaseConfig
 import network.cow.minigame.noma.spigot.SpigotActor
 import network.cow.minigame.noma.spigot.SpigotGame
 import network.cow.minigame.noma.spigot.phase.SpigotPhase
+import network.cow.minigame.noma.spigot.phase.VotePhase
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.Store
+import network.cow.minigame.pixlers.StoreKeys
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.tool.ToolBox
@@ -13,8 +20,6 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 
 /**
  * @author Benedikt Wüller
@@ -36,8 +41,12 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
     }
 
     override fun onStart() {
-        val palette = this.game.store.get(ColorPalette.STORE_KEY) ?: ColorPalette(ColorPalette.Type.FULL)
+        val palette = this.game.store.get(StoreKeys.PALETTE) ?: ColorPalette(ColorPalette.Type.FULL)
         palette.draw(this.game.world.getBlockAt(-39, 70, -12))
+
+        val topic = this.game.store.get(StoreKeys.FORCED_TOPIC)
+            ?: this.game.store.get<VotePhase.Result<String>>(StoreKeys.VOTED_TOPIC)?.items?.first()?.value
+            ?: error("No topic has been voted or selected.")
 
         this.game.getSpigotActors().forEach {
             // TODO: read location from world config
@@ -50,6 +59,7 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             )
 
             it.apply { player -> player.isInvisible = true }
+            it.apply { player -> player.showTitle(Title.title(topic.gradient(Gradients.CORPORATE), "Dieser Begriff muss gemalt werden".info())) } // TODO: translate
         }
 
         this.game.getIngamePlayers().forEach {

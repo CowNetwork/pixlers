@@ -1,7 +1,11 @@
 package network.cow.minigame.pixlers.phase
 
 import com.google.common.collect.HashBiMap
+import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.corporate
+import network.cow.messages.adventure.highlight
+import network.cow.messages.adventure.plus
+import network.cow.messages.spigot.sendInfo
 import network.cow.minigame.noma.api.config.PhaseConfig
 import network.cow.minigame.noma.spigot.SpigotActor
 import network.cow.minigame.noma.spigot.SpigotCountdownTimer
@@ -11,6 +15,7 @@ import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.Store
+import network.cow.minigame.pixlers.StoreKeys
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.spigot.extensions.ItemBuilder
@@ -39,7 +44,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
     private val canvasMappings = HashBiMap.create<Canvas, BlockCanvas>()
     private val selections = mutableMapOf<Player, Canvas>()
 
-    private val timer = SpigotCountdownTimer(30L).onDone(::next)
+    private val timer = SpigotCountdownTimer(20L).onDone(::next)
 
     private lateinit var startTask: BukkitTask
     private lateinit var particleTask: BukkitTask
@@ -57,7 +62,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
     }
 
     override fun onStart() {
-        this.palette = this.game.store.get(ColorPalette.STORE_KEY) ?: ColorPalette(ColorPalette.Type.FULL)
+        this.palette = this.game.store.get(StoreKeys.PALETTE) ?: ColorPalette(ColorPalette.Type.FULL)
 
         val world = this.game.world
 
@@ -138,15 +143,9 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.canvasMappings.clear()
         this.canvasActors.clear()
 
-        val amount = when {
-            this.drawings.size == 3 -> 3
-            this.drawings.size < 3 || this.drawings.size == 4 -> 2
-            else -> 3
-        }
-
-        (0 until amount).map { this.canvases[it] }.forEach {
+        this.canvases.forEach {
             it.refresh()
-            val (player, canvas) = this.drawings.poll()
+            val (player, canvas) = this.drawings.poll() ?: return@forEach
             this.canvasActors[canvas] = player
             this.canvasMappings[canvas] = it
 
@@ -176,7 +175,8 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         val canvas = this.canvases.firstOrNull { it.calculatePointOnCanvas(player) != null } ?: return
         this.selections[player] = this.canvasMappings.inverse()[canvas] ?: return
 
-        // TODO: send message
+        // TODO: translate
+        player.sendInfo("Du hast ".comp() + "Bild ${this.canvases.indexOf(canvas) + 1}".highlight() + " ausgewählt.")
     }
 
     override fun onStop() {

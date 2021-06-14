@@ -82,10 +82,12 @@ class BlockCanvas(
     }
 
     fun removePlayer(player: Player) {
+        if (!this.isVirtual) return
         this.players.remove(player)
     }
 
     fun addPlayer(player: Player) {
+        if (!this.isVirtual) return
         this.players.add(player)
         (0 until this.height).forEach { y ->
             (0 until this.width).forEach { x ->
