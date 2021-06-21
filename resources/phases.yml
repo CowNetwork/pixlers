@@ -1,6 +1,6 @@
 phases:
   - key: lobby
-    kind: network.cow.minigame.pixlers.phase.LobbyPhase
+    kind: noma/spigot/phases/LobbyVotePhase
     voteables:
       - pool: topics
         options: 5
@@ -27,6 +27,10 @@ phases:
       kind: network.cow.minigame.pixlers.world.RatePhaseWorldProvider
   - key: end
     kind: noma/spigot/phases/EndPhase
+    worldProvider:
+      kind: noma/spigot/worldProviders/CurrentWorld
+    teleport:
+      onStart: false
     phaseEndCountdown:
       duration: 30
     duration: 0
