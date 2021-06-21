@@ -38,7 +38,7 @@ class PixlersCommand(private val store: Store) : Cowmand() {
                 return
             }
 
-            val topic = (0..args.size).joinToString(" ") { args[it] }
+            val topic = (0 until args.size).joinToString(" ") { args[it] }
             this@PixlersCommand.store.set(StoreKeys.FORCED_TOPIC, topic)
             sender.sendInfo("The topic has been changed to".comp() + topic.highlight() + ".")
         }

@@ -142,12 +142,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.canvasMappings.clear()
         this.canvasActors.clear()
 
-        // Make sure to stop this phase, if there are not enough drawing to vote on.
-        if (this.drawings.size <= 1) {
-            this.game.nextPhase(true)
-            return
-        }
-
+        var amount = 0
         this.canvases.forEach {
             it.refresh()
             val (player, canvas) = this.drawings.poll() ?: return@forEach
@@ -159,6 +154,14 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
                     it.drawColor(x, y, canvas.calculateColor(x, y) ?: this.palette.baseColor)
                 }
             }
+
+            amount += 1
+        }
+
+        // Make sure to stop this phase, if there are not enough drawing to vote on.
+        if (amount <= 1) {
+            this.game.nextPhase(true)
+            return
         }
 
         this.timer.start()
