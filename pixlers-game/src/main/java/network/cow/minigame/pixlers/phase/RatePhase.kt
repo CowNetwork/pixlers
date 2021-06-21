@@ -14,7 +14,6 @@ import network.cow.minigame.noma.spigot.phase.EndPhase
 import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
-import network.cow.minigame.pixlers.Store
 import network.cow.minigame.pixlers.StoreKeys
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
@@ -66,7 +65,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
         val world = this.game.world
 
-        val drawings = this.game.store.get<List<Pair<SpigotActor, Canvas>>>(Store.STORE_KEY_DRAWINGS) ?: emptyList()
+        val drawings = this.game.store.get<List<Pair<SpigotActor, Canvas>>>(StoreKeys.STORE_KEY_DRAWINGS) ?: emptyList()
         this.drawings.addAll(drawings.shuffled())
 
         val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
@@ -143,6 +142,12 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.canvasMappings.clear()
         this.canvasActors.clear()
 
+        // Make sure to stop this phase, if there are not enough drawing to vote on.
+        if (this.drawings.size <= 1) {
+            this.game.nextPhase(true)
+            return
+        }
+
         this.canvases.forEach {
             it.refresh()
             val (player, canvas) = this.drawings.poll() ?: return@forEach
@@ -154,12 +159,6 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
                     it.drawColor(x, y, canvas.calculateColor(x, y) ?: this.palette.baseColor)
                 }
             }
-        }
-
-        // Make sure to stop this phase, if there are not enough drawing to vote on.
-        if (this.drawings.size <= 1) {
-            this.game.nextPhase(true)
-            return
         }
 
         this.timer.start()

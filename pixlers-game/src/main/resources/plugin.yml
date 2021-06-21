@@ -3,8 +3,3 @@ main: network.cow.minigame.pixlers.PixlersPlugin
 api-version: 1.16
 version: 1.0.0
 depend: [SpigotExtensions, Messages, Noma, InventoryDsl]
-
-commands:
-  pixlers:
-    description: Pixlers configuration commands
-    permission: cow.minigame.pixlers.command

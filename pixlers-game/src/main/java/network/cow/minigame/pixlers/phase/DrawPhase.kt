@@ -14,7 +14,6 @@ import network.cow.minigame.noma.spigot.SpigotGame
 import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.noma.spigot.phase.VotePhase
 import network.cow.minigame.pixlers.ColorPalette
-import network.cow.minigame.pixlers.Store
 import network.cow.minigame.pixlers.StoreKeys
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
@@ -81,7 +80,7 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
     }
 
     override fun onStop() {
-        this.storeMiddleware.store(Store.STORE_KEY_DRAWINGS, this.canvases.map { it.toPair() })
+        this.storeMiddleware.store(StoreKeys.STORE_KEY_DRAWINGS, this.canvases.map { it.toPair() })
 
         this.toolboxes.values.forEach { it.remove() }
         this.toolboxes.clear()
