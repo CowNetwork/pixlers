@@ -167,6 +167,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
     @EventHandler
     private fun onInteract(event: PlayerInteractEvent) {
+        if (!this::canvases.isInitialized) return
         event.isCancelled = true
 
         val player = event.player

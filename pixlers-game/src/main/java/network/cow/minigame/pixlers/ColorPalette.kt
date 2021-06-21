@@ -35,28 +35,29 @@ class ColorPalette(type: Type) {
             Instrument.SNARE_DRUM,
             Instrument.XYLOPHONE
         )
+
+        private val COLORS = HashBiMap.create<Int, Int>()
+        private val FULL_PALETTE = ImageIO.read(ColorPalette::class.java.classLoader.getResourceAsStream(Type.FULL.fileName))
+
+        init {
+            repeat(this.FULL_PALETTE.width) { x ->
+                repeat(this.FULL_PALETTE.height) { y ->
+                    val rgb = this.FULL_PALETTE.getRGB(x, y)
+                    COLORS[rgb] = y * this.FULL_PALETTE.width + x
+                }
+            }
+        }
     }
 
-    private val colors = HashBiMap.create<Int, Int>()
-
-    private val fullPalette = ImageIO.read(this.javaClass.classLoader.getResourceAsStream(Type.FULL.fileName))
     private val image = ImageIO.read(this.javaClass.classLoader.getResourceAsStream(type.fileName))
 
     val baseColor: Int = this.image.width - 2
     val initialColor: Int = this.image.height * this.image.width - 1
 
-    init {
-        repeat(this.fullPalette.width) { x ->
-            repeat(this.fullPalette.height) { y ->
-                this.colors[this.fullPalette.getRGB(x, y)] to (y * this.fullPalette.width + x)
-            }
-        }
-    }
-
     fun draw(from: Block, size: Int = 3) {
         repeat(this.image.width) { baseX ->
             repeat(this.image.height) inner@{ baseY ->
-                val index = this.colors[this.image.getRGB(baseX, baseY)] ?: return@inner
+                val index = COLORS[this.image.getRGB(baseX, baseY)] ?: return@inner
                 repeat(size) { deltaX ->
                     repeat(size) { deltaY ->
                         val x = baseX * size + deltaX
@@ -72,11 +73,11 @@ class ColorPalette(type: Type) {
         val x = index % this.image.width
         val y = index / this.image.width
 
-        val color = this.image.getRGB(x, y)
-        val realIndex = this.colors[color] ?: error("Color at ${x}x$y does not exist on the full palette.")
+        val rgb = this.image.getRGB(x, y)
+        val realIndex = COLORS[rgb] ?: error("Color at ${x}x$y does not exist on the full palette.")
 
-        val column = realIndex % this.fullPalette.width
-        val row = realIndex / this.fullPalette.width
+        val column = realIndex % FULL_PALETTE.width
+        val row = realIndex / FULL_PALETTE.width
 
         val instrument = INSTRUMENTS[column % INSTRUMENTS.size]
         val isPowered = column >= INSTRUMENTS.size
@@ -114,7 +115,7 @@ class ColorPalette(type: Type) {
         if (data.isPowered) column += INSTRUMENTS.size
         val row = data.note.id.toInt()
         val rgb = this.image.getRGB(column, row)
-        return colors[rgb] ?: error("Color at ${column}x$row does not exist on the full palette.")
+        return COLORS[rgb] ?: error("Color at ${column}x$row does not exist on the full palette.")
     }
 
     enum class Type(val fileName: String) {

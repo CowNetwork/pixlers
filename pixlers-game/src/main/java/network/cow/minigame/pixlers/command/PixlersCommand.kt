@@ -20,7 +20,12 @@ class  PixlersCommand(private val storeMiddleware: StoreMiddleware) : Cowmand() 
 
     override val subCommands = listOf(TopicCommand(), TimeCommand())
 
-    override fun execute(sender: CommandSender, args: Arguments) = Unit
+    override fun execute(sender: CommandSender, args: Arguments) {
+        if (args.isEmpty()) {
+            sender.sendInfo("Usage: " + "/pixlers <topic|time>".highlight())
+            return
+        }
+    }
 
     inner class TopicCommand : Cowmand() {
 

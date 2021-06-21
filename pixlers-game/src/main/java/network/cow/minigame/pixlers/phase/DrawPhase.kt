@@ -1,10 +1,13 @@
 package network.cow.minigame.pixlers.phase
 
 import net.kyori.adventure.title.Title
+import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.gradient
-import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.info
+import network.cow.messages.adventure.plus
+import network.cow.messages.adventure.translate
 import network.cow.messages.core.Gradients
+import network.cow.messages.spigot.sendInfo
 import network.cow.minigame.noma.api.config.PhaseConfig
 import network.cow.minigame.noma.spigot.SpigotActor
 import network.cow.minigame.noma.spigot.SpigotGame
@@ -48,6 +51,12 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             ?: this.game.store.get<VotePhase.Result<String>>(StoreKeys.VOTED_TOPIC)?.items?.first()?.value
             ?: error("No topic has been voted or selected.")
 
+        Bukkit.getOnlinePlayers().forEach {
+            val translatedTopic = topic.translate(it).gradient(Gradients.CORPORATE)
+            it.showTitle(Title.title(translatedTopic, "Dieser Begriff muss gemalt werden".info())) // TODO: translate
+            it.sendInfo("Dieser Begriff muss gemalt werden: ".comp() + translatedTopic) // TODO: translate
+        }
+
         this.game.getSpigotActors().forEach {
             // TODO: read location from world config
             this.canvases[it] = BlockCanvas(
@@ -59,7 +68,6 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             )
 
             it.apply { player -> player.isInvisible = true }
-            it.apply { player -> player.showTitle(Title.title(topic.gradient(Gradients.CORPORATE), "Dieser Begriff muss gemalt werden".info())) } // TODO: translate
         }
 
         this.game.getIngamePlayers().forEach {
