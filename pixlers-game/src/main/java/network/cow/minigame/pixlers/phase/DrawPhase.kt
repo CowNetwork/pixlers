@@ -43,6 +43,9 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
     }
 
     override fun onStart() {
+        val duration = this.game.store.get(StoreKeys.DURATION) ?: this.config.timeout.duration
+        this.config.timeout.duration = duration
+
         val palette = this.game.store.get(StoreKeys.PALETTE) ?: ColorPalette(ColorPalette.Type.FULL)
         palette.draw(this.game.world.getBlockAt(-39, 70, -12))
 

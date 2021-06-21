@@ -57,6 +57,8 @@ class PixlersCommand(private val store: Store) : Cowmand() {
             }
 
             val duration = args[0].toLong()
+            this@PixlersCommand.store.set(StoreKeys.DURATION, duration)
+
             val time = if (duration == 1L) "one second" else "$duration seconds"
             sender.sendInfo("The duration has been changed to ".comp() + time.highlight() + ".")
         }
