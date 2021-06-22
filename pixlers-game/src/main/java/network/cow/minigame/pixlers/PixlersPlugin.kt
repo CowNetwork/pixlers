@@ -15,10 +15,10 @@ import org.bukkit.Bukkit
 class PixlersPlugin : NomaGamePlugin() {
 
     override fun onEnable() {
+        super.onEnable()
         MessagesPlugin.PREFIX = "Pixlers".gradient(Gradients.MINIGAME)
         Cowmands.register(this, PixlersCommand(this.game.store))
         Bukkit.getPluginManager().registerEvents(CancelListener(), this)
-        super.onEnable()
     }
 
 }
