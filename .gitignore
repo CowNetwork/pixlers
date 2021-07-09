@@ -144,3 +144,7 @@ buildNumber.properties
 test/
 
 assets/
+
+deploy/pixlers-cinema/
+deploy/pixlers-eval/
+deploy/spawn/

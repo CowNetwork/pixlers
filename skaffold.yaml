@@ -1,0 +1,21 @@
+apiVersion: skaffold/v2beta17
+kind: Config
+metadata:
+  name: pixlers
+
+build:
+  local:
+    useBuildkit: true
+  artifacts:
+    - image: ghcr.io/cownetwork/pixlers
+      context: .
+      docker:
+        buildArgs:
+          MAVEN_USER: "{{.MVN_USER}}"
+          MAVEN_PASS: "{{.MVN_PASS}}"
+
+deploy:
+  kubectl:
+    manifests:
+      - deploy/deployment.yaml
+      - deploy/service.yaml

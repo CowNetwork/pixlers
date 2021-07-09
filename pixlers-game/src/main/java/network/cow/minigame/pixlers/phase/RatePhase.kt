@@ -37,7 +37,7 @@ import kotlin.math.roundToInt
 class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : SpigotPhase(game, config) {
 
     private lateinit var canvases: List<BlockCanvas>
-    private val drawings: Queue<Pair<SpigotActor, Canvas>> = LinkedList()
+    private val drawings = LinkedList<Pair<SpigotActor, Canvas>>()
 
     private val canvasActors = mutableMapOf<Canvas, SpigotActor>()
     private val canvasMappings = HashBiMap.create<Canvas, BlockCanvas>()
@@ -142,7 +142,22 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.canvasMappings.clear()
         this.canvasActors.clear()
 
-        var amount = 0
+        // Make sure to stop this phase, if there are not enough drawing to vote on.
+        if (this.drawings.size <= 1) {
+            this.canvases.forEach { it.refresh() }
+            if (this.drawings.isNotEmpty()) {
+                val it = this.canvases.first()
+                val (_, canvas) = this.drawings.firstOrNull() ?: return
+                for (x in 0 until canvas.width) {
+                    for (y in 0 until canvas.height) {
+                        it.drawColor(x, y, canvas.calculateColor(x, y) ?: this.palette.baseColor)
+                    }
+                }
+            }
+            this.game.nextPhase(true)
+            return
+        }
+
         this.canvases.forEach {
             it.refresh()
             val (player, canvas) = this.drawings.poll() ?: return@forEach
@@ -154,14 +169,6 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
                     it.drawColor(x, y, canvas.calculateColor(x, y) ?: this.palette.baseColor)
                 }
             }
-
-            amount += 1
-        }
-
-        // Make sure to stop this phase, if there are not enough drawing to vote on.
-        if (amount <= 1) {
-            this.game.nextPhase(true)
-            return
         }
 
         this.timer.start()

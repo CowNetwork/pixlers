@@ -1,18 +1,17 @@
 package network.cow.minigame.pixlers.canvas
 
-import network.cow.minigame.pixlers.ColorPalette
 import org.bukkit.entity.Player
 
 /**
  * @author Benedikt Wüller
  */
-class CompoundCanvas(vararg canvas: Canvas, palette: ColorPalette) : Canvas(canvas.first().width, canvas.first().width, palette) {
+class CompoundCanvas(vararg canvases: Canvas) : Canvas(canvases.first().width, canvases.first().width, canvases.first().palette) {
 
-    val canvases = mutableListOf<Canvas>()
+    val canvases = mutableListOf(*canvases)
 
     init {
-        for (it in canvas) {
-            if (it.width != this.width || it.height != this.height) {
+        for (it in canvases) {
+            if (it.width != this.canvases.first().width || it.height != this.canvases.first().height) {
                 error("All canvases must be the same dimensions.")
             }
         }

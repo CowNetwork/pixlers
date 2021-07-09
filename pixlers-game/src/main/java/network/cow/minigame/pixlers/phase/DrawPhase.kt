@@ -17,6 +17,8 @@ import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.StoreKeys
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
+import network.cow.minigame.pixlers.canvas.CompoundCanvas
+import network.cow.minigame.pixlers.canvas.ImageCanvas
 import network.cow.minigame.pixlers.tool.ToolBox
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -61,13 +63,18 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
         this.game.getSpigotActors().forEach {
             // TODO: read location from world config
-            this.canvases[it] = BlockCanvas(
-                this.game.world.getBlockAt(-38, 113, -15),
-                BlockFace.SOUTH,
-                80, 40,
-                *it.getPlayers().toTypedArray(),
-                palette = palette
+
+            val canvas = CompoundCanvas(
+                BlockCanvas(
+                    this.game.world.getBlockAt(-38, 113, -15),
+                    BlockFace.SOUTH,
+                    80, 40,
+                    *it.getPlayers().toTypedArray(),
+                    palette = palette
+                ),
+                ImageCanvas(80, 40, palette, 4)
             )
+            this.canvases[it] = canvas
 
             it.apply { player -> player.isInvisible = true }
         }
