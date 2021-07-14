@@ -72,10 +72,11 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.startTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             val players = Bukkit.getOnlinePlayers().toTypedArray()
 
+            // TODO: read from config
             this.canvases = listOf(
-                    BlockCanvas(world.getBlockAt(168, 192, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette, isVirtual = false),
-                    BlockCanvas(world.getBlockAt(259, 192, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette, isVirtual = false),
-                    BlockCanvas(world.getBlockAt(214, 143, -11), BlockFace.SOUTH, 80, 40, *players, palette = palette, isVirtual = false),
+                    BlockCanvas(world.getBlockAt(-98, 183, 15), BlockFace.NORTH, 120, 70, *players, palette = palette, isVirtual = false),
+                    BlockCanvas(world.getBlockAt(-228, 183, 15), BlockFace.NORTH, 120, 70, *players, palette = palette, isVirtual = false),
+                    BlockCanvas(world.getBlockAt(-163, 104, 15), BlockFace.NORTH, 120, 70, *players, palette = palette, isVirtual = false),
             )
 
             this.game.getIngamePlayers().forEach {

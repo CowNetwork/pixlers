@@ -49,7 +49,7 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.config.timeout.duration = duration
 
         val palette = this.game.store.get(StoreKeys.PALETTE) ?: ColorPalette(ColorPalette.Type.FULL)
-        palette.draw(this.game.world.getBlockAt(-39, 70, -12))
+        palette.draw(this.game.world.getBlockAt(-31, 0, 63))
 
         val topic = this.game.store.get(StoreKeys.FORCED_TOPIC)
             ?: this.game.store.get<VotePhase.Result<String>>(StoreKeys.VOTED_TOPIC)?.items?.first()?.value
@@ -66,13 +66,13 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
             val canvas = CompoundCanvas(
                 BlockCanvas(
-                    this.game.world.getBlockAt(-38, 113, -15),
-                    BlockFace.SOUTH,
-                    80, 40,
+                    this.game.world.getBlockAt(69, 83, 85),
+                    BlockFace.NORTH,
+                    120, 70,
                     *it.getPlayers().toTypedArray(),
                     palette = palette
                 ),
-                ImageCanvas(80, 40, palette, 4)
+                ImageCanvas(120, 70, palette, 4)
             )
             this.canvases[it] = canvas
 

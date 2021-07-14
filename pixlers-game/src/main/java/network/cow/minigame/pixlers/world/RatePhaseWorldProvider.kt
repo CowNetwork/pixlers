@@ -4,8 +4,12 @@ import network.cow.minigame.noma.spigot.SpigotActor
 import network.cow.minigame.noma.spigot.SpigotGame
 import network.cow.minigame.noma.spigot.config.WorldProviderConfig
 import network.cow.minigame.noma.spigot.world.provider.WorldProvider
+import org.bukkit.Bukkit
+import org.bukkit.GameRule
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.WorldCreator
+import org.bukkit.WorldType
 
 /**
  * @author Benedikt Wüller
@@ -14,9 +18,16 @@ class RatePhaseWorldProvider(game: SpigotGame, config: WorldProviderConfig) : Wo
 
     override fun getSpawnLocations(actor: SpigotActor?): List<Location> {
         // TODO: read from world config
-        return listOf(Location(this.game.world, 254.0, 153.0, 62.0, 180.0F, 0.0F))
+        return listOf(Location(this.game.world, -222.0, 110.0, -82.0, 0.0F, 0.0F))
     }
 
-    override fun selectWorld(): World = this.game.world
+    override fun selectWorld(): World {
+        // TODO: read world from config
+        val world = Bukkit.createWorld(WorldCreator("pixlers-eval").generateStructures(false).type(WorldType.FLAT))!!
+        world.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false)
+        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false)
+        return world
+    }
 
 }
