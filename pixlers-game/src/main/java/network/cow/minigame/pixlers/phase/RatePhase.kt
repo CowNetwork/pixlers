@@ -1,6 +1,7 @@
 package network.cow.minigame.pixlers.phase
 
 import com.google.common.collect.HashBiMap
+import net.kyori.adventure.text.Component
 import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.corporate
 import network.cow.messages.adventure.highlight
@@ -26,6 +27,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
 import java.util.LinkedList
 import java.util.Queue
@@ -71,6 +74,8 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
         this.startTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             val players = Bukkit.getOnlinePlayers().toTypedArray()
+
+            players.forEach { it.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 1, true, false, false)) }
 
             // TODO: read from config
             this.canvases = listOf(
@@ -186,8 +191,22 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         val canvas = this.canvases.firstOrNull { it.calculatePointOnCanvas(player) != null } ?: return
         this.selections[player] = this.canvasMappings.inverse()[canvas] ?: return
 
+        var name = Component.empty()
+        val names = this.canvasActors[canvas]!!.getPlayers().map { it.displayName() }
+
+        this.canvasActors[canvas]!!.getPlayers().map {
+            it.displayName()
+        }.forEachIndexed { index, author ->
+            name = name.append(author)
+            if (index < names.lastIndex - 1) {
+                name = name.append(", ".comp())
+            } else if (index < names.lastIndex) {
+                name = name.append(" & ".comp())
+            }
+        }
+
         // TODO: translate
-        player.sendInfo("Du hast ".comp() + "Bild ${this.canvases.indexOf(canvas) + 1}".highlight() + " ausgewählt.")
+        player.sendInfo("Du hast ".comp() + "Bild ${this.canvases.indexOf(canvas) + 1}".highlight() + " von " + name + " ausgewählt.")
     }
 
     override fun onStop() {
@@ -200,6 +219,10 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             Bukkit.getOnlinePlayers().forEach { player ->
                 this.canvases.forEach { it.removePlayer(player) }
             }
+        }
+
+        Bukkit.getOnlinePlayers().forEach { player ->
+            player.inventory.clear()
         }
 
         if (this.drawings.isNotEmpty()) {

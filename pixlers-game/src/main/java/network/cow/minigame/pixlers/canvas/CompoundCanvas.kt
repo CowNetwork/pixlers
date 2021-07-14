@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 /**
  * @author Benedikt Wüller
  */
-class CompoundCanvas(vararg canvases: Canvas) : Canvas(canvases.first().width, canvases.first().width, canvases.first().palette) {
+class CompoundCanvas(vararg canvases: Canvas) : Canvas(canvases.first().width, canvases.first().height, canvases.first().palette) {
 
     val canvases = mutableListOf(*canvases)
 

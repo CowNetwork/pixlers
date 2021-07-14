@@ -66,7 +66,7 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
             val canvas = CompoundCanvas(
                 BlockCanvas(
-                    this.game.world.getBlockAt(69, 83, 85),
+                    this.game.world.getBlockAt(69, 85, 90),
                     BlockFace.NORTH,
                     120, 70,
                     *it.getPlayers().toTypedArray(),

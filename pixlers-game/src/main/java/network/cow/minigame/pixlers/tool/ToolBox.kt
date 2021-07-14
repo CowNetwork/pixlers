@@ -28,8 +28,8 @@ import java.awt.Point
 class ToolBox(val player: Player, val canvas: Canvas, private val palette: ColorPalette) : Listener {
 
     private val tools = listOf(
-            ColorPickerTool(this, this.canvas),
             PaintTool(this, this.canvas),
+            ColorPickerTool(this, this.canvas),
             FillTool(this, this.canvas),
             SprayCanTool(this, this.canvas),
             EraseTool(this, this.canvas),
