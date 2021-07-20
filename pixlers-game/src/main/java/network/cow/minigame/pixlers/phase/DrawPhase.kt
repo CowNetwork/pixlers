@@ -3,9 +3,11 @@ package network.cow.minigame.pixlers.phase
 import net.kyori.adventure.title.Title
 import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.gradient
+import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.info
 import network.cow.messages.adventure.plus
 import network.cow.messages.adventure.translate
+import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.core.Gradients
 import network.cow.messages.spigot.sendInfo
 import network.cow.minigame.noma.api.config.PhaseConfig
@@ -15,6 +17,7 @@ import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.noma.spigot.phase.VotePhase
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.StoreKeys
+import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.canvas.CompoundCanvas
@@ -57,8 +60,8 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
         Bukkit.getOnlinePlayers().forEach {
             val translatedTopic = topic.translate(it).gradient(Gradients.CORPORATE)
-            it.showTitle(Title.title(translatedTopic, "Dieser Begriff muss gemalt werden".info())) // TODO: translate
-            it.sendInfo("Dieser Begriff muss gemalt werden: ".comp() + translatedTopic) // TODO: translate
+            it.showTitle(Title.title(translatedTopic, Translations.Phases.Draw.INFO_TITLE.translate(it).info()))
+            it.sendInfo(Translations.Phases.Draw.INFO_CHAT.translateToComponent(it, translatedTopic.highlight()))
         }
 
         this.game.getSpigotActors().forEach {

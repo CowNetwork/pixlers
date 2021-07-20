@@ -3,8 +3,11 @@ package network.cow.minigame.pixlers.tool
 import network.cow.messages.adventure.component
 import network.cow.messages.adventure.corporate
 import network.cow.messages.adventure.plus
+import network.cow.messages.adventure.translate
+import network.cow.messages.adventure.translateToComponent
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
+import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.canvas.CompoundCanvas
@@ -106,8 +109,10 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
         }
 
         if (this.tick % 4L == 0L) {
-            // TODO: translate
-            this.player.sendActionBar("Farbe: ".corporate() + "████".component(this.palette.getColor(this.color)))
+            this.player.sendActionBar(Translations.COLOR.translateToComponent(
+                this.player,
+                "████".component(this.palette.getColor(this.color))
+            ).corporate())
         }
 
         this.tick += 1

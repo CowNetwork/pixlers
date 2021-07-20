@@ -5,7 +5,10 @@ import network.cow.messages.adventure.gradient
 import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.info
 import network.cow.messages.adventure.plus
+import network.cow.messages.adventure.translate
+import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.core.Gradients
+import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.spigot.extensions.ItemBuilder
 import org.bukkit.Material
@@ -48,14 +51,13 @@ class FillTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canvas) {
     }
 
     override fun getItemStack(player: Player): ItemStack {
-        // TODO: translate
         return ItemBuilder(Material.WOODEN_HOE)
-                .name("Eimer".gradient(Gradients.CORPORATE))
-                .lore(
-                        Component.empty(),
-                        "Rechtsklicke".highlight() + ", um den Bereich zu füllen.".info()
-                )
-                .build()
+            .name(Translations.Tool.Fill.NAME.translate(player).gradient(Gradients.CORPORATE))
+            .lore(
+                Component.empty(),
+                Translations.Tool.Fill.ACTION_RIGHT.translateToComponent(player, Translations.Action.RIGHT.translate(player).highlight()).info()
+            )
+            .build()
     }
 
 }

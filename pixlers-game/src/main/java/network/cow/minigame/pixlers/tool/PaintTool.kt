@@ -8,7 +8,10 @@ import network.cow.messages.adventure.gradient
 import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.info
 import network.cow.messages.adventure.plus
+import network.cow.messages.adventure.translate
+import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.core.Gradients
+import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.getPointsInCircle
 import network.cow.spigot.extensions.ItemBuilder
@@ -41,15 +44,14 @@ open class PaintTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canv
     protected open fun getColor() = this.toolBox.color
 
     override fun getItemStack(player: Player): ItemStack {
-        // TODO: translate
         return ItemBuilder(Material.GOLDEN_SWORD)
-                .name("Stift".gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.size.toString().comp()).info())
-                .lore(
-                        Component.empty(),
-                        "Linksklicke".highlight() + ", um die Größe zu verändern.".info(),
-                        "Rechtsklicke".highlight() + ", um zu zeichnen.".info()
-                )
-                .build()
+            .name(Translations.Tool.Paint.NAME.translate(player).gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.size.toString().comp()).info())
+            .lore(
+                Component.empty(),
+                Translations.Tool.Paint.ACTION_LEFT.translateToComponent(player, Translations.Action.LEFT.translate(player).highlight()).info(),
+                Translations.Tool.Paint.ACTION_RIGHT.translateToComponent(player, Translations.Action.RIGHT.translate(player).highlight()).info()
+            )
+            .build()
     }
 
 }

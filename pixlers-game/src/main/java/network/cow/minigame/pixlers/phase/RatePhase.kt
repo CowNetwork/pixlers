@@ -6,6 +6,8 @@ import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.corporate
 import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.plus
+import network.cow.messages.adventure.translate
+import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.spigot.sendInfo
 import network.cow.minigame.noma.api.config.PhaseConfig
 import network.cow.minigame.noma.spigot.SpigotActor
@@ -16,6 +18,7 @@ import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.StoreKeys
+import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.spigot.extensions.ItemBuilder
@@ -86,7 +89,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
             this.game.getIngamePlayers().forEach {
                 val item = ItemBuilder(Material.NAME_TAG)
-                        .name("Wähle deinen Favoriten".corporate()) // TODO: translate
+                        .name(Translations.Phases.Rate.ITEM.translate(it).corporate())
                         .build()
                 it.inventory.addItem(item)
             }
@@ -205,8 +208,14 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             }
         }
 
-        // TODO: translate
-        player.sendInfo("Du hast ".comp() + "Bild ${this.canvases.indexOf(canvas) + 1}".highlight() + " von " + name + " ausgewählt.")
+        val canvasKey = when (this.canvases.indexOf(canvas)) {
+            0 -> Translations.Phases.Rate.Canvas.FIRST
+            1 -> Translations.Phases.Rate.Canvas.SECOND
+            2 -> Translations.Phases.Rate.Canvas.THIRD
+            else -> throw IllegalStateException("Canvas not mapped.")
+        }
+
+        player.sendInfo(Translations.Phases.Rate.SELECTED.translateToComponent(player, canvasKey.translate(player).highlight(), name))
     }
 
     override fun onStop() {

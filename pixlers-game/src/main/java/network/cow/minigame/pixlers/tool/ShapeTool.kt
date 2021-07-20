@@ -7,7 +7,10 @@ import network.cow.messages.adventure.gradient
 import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.info
 import network.cow.messages.adventure.plus
+import network.cow.messages.adventure.translate
+import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.core.Gradients
+import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.shape.ShapeType
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.spigot.extensions.ItemBuilder
@@ -84,7 +87,6 @@ class ShapeTool(toolBox: ToolBox, canvas: Canvas) : Tool(toolBox, canvas), WithL
     }
 
     override fun getItemStack(player: Player): ItemStack {
-        // TODO: translate
         val material = when (this.type) {
             ShapeType.LINE -> Material.DIAMOND_HOE
             ShapeType.RECTANGLE -> Material.STONE_HOE
@@ -93,13 +95,13 @@ class ShapeTool(toolBox: ToolBox, canvas: Canvas) : Tool(toolBox, canvas), WithL
         }
         
         return ItemBuilder(material)
-                .name("Form".gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.type.displayName.comp()).info())
-                .lore(
-                        Component.empty(),
-                        "Linksklicke".highlight() + ", um die Form zu wechseln.".info(),
-                        "Rechtsklicke".highlight() + " zweimal, um die Form zu zeichnen.".info()
-                )
-                .build()
+            .name(Translations.Tool.Shape.NAME.translate(player).gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.type.translationKey.translateToComponent(player)).info())
+            .lore(
+                Component.empty(),
+                Translations.Tool.Shape.ACTION_LEFT.translateToComponent(player, Translations.Action.LEFT.translate(player).highlight()).info(),
+                Translations.Tool.Shape.ACTION_RIGHT.translateToComponent(player, Translations.Action.RIGHT.translate(player).highlight()).info()
+            )
+            .build()
     }
 
 }
