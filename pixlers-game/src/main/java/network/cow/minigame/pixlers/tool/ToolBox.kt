@@ -78,6 +78,7 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
 
     @EventHandler
     private fun onSwitchTool(event: PlayerItemHeldEvent) {
+        if (this.player != event.player) return
         if (event.previousSlot == event.newSlot) return
         this.currentTool?.cancel()
         this.currentTool = this.tools.getOrNull(event.newSlot)
@@ -85,6 +86,7 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
 
     @EventHandler
     private fun onInteract(event: PlayerInteractEvent) {
+        if (this.player != event.player) return
         val tool = this.currentTool ?: return
 
         this.updateCursor()

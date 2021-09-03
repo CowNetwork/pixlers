@@ -195,7 +195,14 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         this.selections[player] = this.canvasMappings.inverse()[canvas] ?: return
 
         var name = Component.empty()
-        val names = this.canvasActors[canvas]!!.getPlayers().map { it.displayName() }
+
+        val players = this.canvasActors[canvas]!!.getPlayers()
+        if (players.contains(player)) {
+            // TODO: send message
+            return
+        }
+
+        val names = players.map { it.displayName() }
 
         this.canvasActors[canvas]!!.getPlayers().map {
             it.displayName()
