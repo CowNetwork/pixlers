@@ -109,8 +109,6 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             // Show for all ingame players.
             players.filter { it != player }.forEach { player.showPlayer(plugin, it) }
         }
-
-        Bukkit.getOnlinePlayers().forEach { it.isInvisible = false }
     }
 
     override fun onTimeout() = Unit
