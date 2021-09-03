@@ -16,6 +16,7 @@ import network.cow.minigame.noma.spigot.SpigotGame
 import network.cow.minigame.noma.spigot.phase.SpigotPhase
 import network.cow.minigame.noma.spigot.phase.VotePhase
 import network.cow.minigame.pixlers.ColorPalette
+import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.StoreKeys
 import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.BlockCanvas
@@ -27,6 +28,7 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
+import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * @author Benedikt Wüller
@@ -78,17 +80,20 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
                 ImageCanvas(120, 70, palette, 4)
             )
             this.canvases[it] = canvas
-
-            it.apply { player -> player.isInvisible = true }
         }
 
-        this.game.getIngamePlayers().forEach {
-            it.gameMode = GameMode.CREATIVE
-            it.isFlying = true
+        val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
+        val players = this.game.getIngamePlayers()
+        players.forEach { player ->
+            player.gameMode = GameMode.CREATIVE
+            player.isFlying = true
 
-            val toolbox = ToolBox(it, this.canvases[this.game.getActor(it)]!!, palette)
+            val toolbox = ToolBox(player, this.canvases[this.game.getActor(player)]!!, palette)
             toolbox.apply()
-            this.toolboxes[it] = toolbox
+            this.toolboxes[player] = toolbox
+
+            // Hide for all ingame players.
+            players.filter { it != player }.forEach { player.hidePlayer(plugin, it) }
         }
     }
 
@@ -97,6 +102,13 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
         this.toolboxes.values.forEach { it.remove() }
         this.toolboxes.clear()
+
+        val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
+        val players = this.game.getIngamePlayers()
+        players.forEach { player ->
+            // Show for all ingame players.
+            players.filter { it != player }.forEach { player.showPlayer(plugin, it) }
+        }
 
         Bukkit.getOnlinePlayers().forEach { it.isInvisible = false }
     }
