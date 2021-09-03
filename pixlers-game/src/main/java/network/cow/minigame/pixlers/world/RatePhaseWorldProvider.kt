@@ -27,7 +27,7 @@ class RatePhaseWorldProvider(game: SpigotGame, config: WorldProviderConfig) : Wo
         // TODO: read world from config
 
         val targetName = UUID.randomUUID().toString()
-        Paths.get("/opt/spigot/plugins/Pixlers/maps/pixlers-eval").toFile().copyRecursively(Paths.get(this.game.config.workingDirectory, targetName).toFile(), overwrite = true)
+        Paths.get("/opt/spigot/plugins/pixlers/maps/pixlers-eval").toFile().copyRecursively(Paths.get(this.game.config.workingDirectory, targetName).toFile(), overwrite = true)
 
         val world = Bukkit.createWorld(WorldCreator(targetName).generateStructures(false).type(WorldType.FLAT))!!
         world.setGameRule(GameRule.DO_WEATHER_CYCLE, false)

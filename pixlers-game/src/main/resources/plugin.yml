@@ -1,4 +1,4 @@
-name: Pixlers
+name: pixlers
 main: network.cow.minigame.pixlers.PixlersPlugin
 api-version: 1.16
 version: 1.0.0
