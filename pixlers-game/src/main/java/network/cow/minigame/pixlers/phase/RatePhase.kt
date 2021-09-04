@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component
 import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.corporate
 import network.cow.messages.adventure.highlight
-import network.cow.messages.adventure.plus
 import network.cow.messages.adventure.translate
 import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.spigot.sendInfo
@@ -25,6 +24,7 @@ import network.cow.spigot.extensions.ItemBuilder
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
+import org.bukkit.Sound
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -34,7 +34,6 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
 import java.util.LinkedList
-import java.util.Queue
 import kotlin.math.roundToInt
 
 /**
@@ -194,16 +193,16 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         val canvas = this.canvases.firstOrNull { it.calculatePointOnCanvas(player) != null } ?: return
         this.selections[player] = this.canvasMappings.inverse()[canvas] ?: return
 
-        var name = Component.empty()
-
         val players = this.canvasActors[canvas]!!.getPlayers()
         if (players.contains(player)) {
             // TODO: send message
             return
         }
 
-        val names = players.map { it.displayName() }
+        player.playSound(player.eyeLocation, Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F)
 
+        val names = players.map { it.displayName() }
+        var name = Component.empty()
         this.canvasActors[canvas]!!.getPlayers().map {
             it.displayName()
         }.forEachIndexed { index, author ->
@@ -222,6 +221,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             else -> throw IllegalStateException("Canvas not mapped.")
         }
 
+        // TODO: anonymous voting
         player.sendInfo(Translations.Phases.Rate.SELECTED.translateToComponent(player, canvasKey.translate(player).highlight(), name))
     }
 

@@ -95,4 +95,12 @@ abstract class Canvas(val width: Int, val height: Int, val palette: ColorPalette
         }.firstOrNull() ?: this.palette.baseColor
     }
 
+    fun castOrFindBlockCanvas() : BlockCanvas? {
+        return when (this) {
+            is BlockCanvas -> this
+            is CompoundCanvas -> this.canvases.mapNotNull(Canvas::castOrFindBlockCanvas).firstOrNull()
+            else -> null
+        }
+    }
+
 }

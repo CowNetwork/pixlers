@@ -1,11 +1,11 @@
 package network.cow.minigame.pixlers.phase
 
+import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent
+import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent
 import net.kyori.adventure.title.Title
-import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.gradient
 import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.info
-import network.cow.messages.adventure.plus
 import network.cow.messages.adventure.translate
 import network.cow.messages.adventure.translateToComponent
 import network.cow.messages.core.Gradients
@@ -28,6 +28,7 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -112,5 +113,23 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
     }
 
     override fun onTimeout() = Unit
+
+    @EventHandler
+    private fun onSpectate(event: PlayerStartSpectatingEntityEvent) {
+        val newTarget = event.newSpectatorTarget
+        if (newTarget !is Player) return
+        val actor = this.game.getSpigotActor(newTarget)
+        val canvas = actor?.let { this.canvases[it]?.castOrFindBlockCanvas() }
+        canvas?.addPlayer(event.player)
+    }
+
+    @EventHandler
+    private fun onStopSpectate(event: PlayerStopSpectatingEntityEvent) {
+        val oldTarget = event.spectatorTarget
+        if (oldTarget !is Player) return
+        val actor = this.game.getSpigotActor(oldTarget)
+        val canvas = actor?.let { this.canvases[it]?.castOrFindBlockCanvas() }
+        canvas?.removePlayer(event.player)
+    }
 
 }

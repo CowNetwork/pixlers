@@ -121,12 +121,7 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
     }
 
     private fun updateCursor() {
-        val point = when (this.canvas) {
-            is BlockCanvas -> this.canvas.calculatePointOnCanvas(this.player)
-            is CompoundCanvas -> (this.canvas.canvases.firstOrNull { it is BlockCanvas } as? BlockCanvas)?.calculatePointOnCanvas(this.player)
-            else -> null
-        } ?: Point(-1, -1)
-
+        val point = this.canvas.castOrFindBlockCanvas()?.calculatePointOnCanvas(this.player) ?: Point(-1, -1)
         this.tools.forEach { it.updateCursor(point.x, point.y) }
     }
 

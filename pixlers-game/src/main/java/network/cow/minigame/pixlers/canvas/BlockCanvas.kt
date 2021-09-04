@@ -84,6 +84,12 @@ class BlockCanvas(
     fun removePlayer(player: Player) {
         if (!this.isVirtual) return
         this.players.remove(player)
+
+        (0 until this.height).forEach { y ->
+            (0 until this.width).forEach { x ->
+                this.drawColor(x, y, this.palette.baseColor, player)
+            }
+        }
     }
 
     fun addPlayer(player: Player) {
