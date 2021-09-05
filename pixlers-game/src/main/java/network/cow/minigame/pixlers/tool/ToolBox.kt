@@ -1,14 +1,5 @@
 package network.cow.minigame.pixlers.tool
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLib
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.events.ListenerPriority
-import com.comphenix.protocol.events.ListeningWhitelist
-import com.comphenix.protocol.events.PacketAdapter
-import com.comphenix.protocol.events.PacketContainer
-import com.comphenix.protocol.events.PacketEvent
-import com.comphenix.protocol.events.PacketListener
 import network.cow.messages.adventure.component
 import network.cow.messages.adventure.corporate
 import network.cow.messages.adventure.translateToComponent
@@ -16,20 +7,16 @@ import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.Canvas
-import network.cow.protocol.wrappers.WrapperPlayServerSpawnEntity
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.data.type.NoteBlock
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
-import org.bukkit.entity.Shulker
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 import java.awt.Point
@@ -57,9 +44,6 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
     private lateinit var task: BukkitTask
     private var tick: Long = 0
 
-    private var shulker: Shulker? = null
-    private lateinit var packetListener: PacketListener
-
     internal var color = this.palette.initialColor
 
     fun apply() {
@@ -80,23 +64,6 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
 
         this.currentTool = this.tools.getOrNull(this.player.inventory.heldItemSlot)
         this.task = Bukkit.getScheduler().runTaskTimer(plugin, this::updateTools, 1L, 1L)
-
-        this.packetListener = object : PacketAdapter(JavaPlugin.getPlugin(PixlersPlugin::class.java), ListenerPriority.HIGH, PacketType.Play.Server.SPAWN_ENTITY) {
-            override fun onPacketSending(event: PacketEvent) {
-                val entity = shulker ?: return
-
-                val container = PacketContainer.fromPacket(event)
-                val packet = WrapperPlayServerSpawnEntity(container)
-
-                if (packet.entityID == entity.entityId && player != event.player) {
-                    event.isCancelled = true
-                }
-
-                super.onPacketSending(event)
-            }
-        }
-
-        ProtocolLibrary.getProtocolManager().addPacketListener(this.packetListener)
     }
 
     fun remove() {
@@ -104,8 +71,6 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
         this.task.cancel()
         this.tools.forEach { it.onUpdateItem = null }
         this.player.inventory.clear()
-
-        ProtocolLibrary.getProtocolManager().removePacketListener(this.packetListener)
     }
 
     @EventHandler
@@ -152,31 +117,13 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
         }
 
         this.tick += 1
+        this.tools.forEach { it.tick = this.tick }
     }
 
     private fun updateCursor() {
         val canvas = this.canvas.castOrFindBlockCanvas()!!
         val point = canvas.calculatePointOnCanvas(this.player) ?: Point(-1, -1)
         this.tools.forEach { it.updateCursor(point.x, point.y) }
-
-        if (point.x < 0 || point.y < 0) {
-            if (this.shulker != null) {
-                this.shulker?.remove()
-                this.shulker = null
-            }
-        } else {
-            val block = canvas.getBlockAt(point)
-            if (this.shulker == null) {
-                val entity = block.world.spawnEntity(block.location, EntityType.SHULKER) as Shulker
-                entity.isInvisible = true
-                entity.isSilent = true
-                entity.isGlowing = true
-                entity.setAI(false)
-                this.shulker = entity
-            } else {
-                this.shulker!!.teleport(block.location)
-            }
-        }
     }
 
 }

@@ -13,6 +13,7 @@ import network.cow.messages.core.Gradients
 import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.getPointsInCircle
+import network.cow.minigame.pixlers.getPointsInLine
 import network.cow.spigot.extensions.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -25,11 +26,19 @@ open class SprayCanTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, c
 
     protected open val sizes = listOf(1, 2, 3, 4, 5)
 
+    private var lastPrimaryAt = 0L
     var size: Int = 3; private set
 
     override val primaryAction: Layer.() -> Unit = {
-        val coordinates = getPointsInCircle(cursor, size)
-        coordinates.filter { Math.random() <= 0.75 }.forEach { this.setColor(it.x, it.y, toolBox.color) }
+        val lastCursor = if (tick - lastPrimaryAt <= 6) lastCursor else cursor
+        val points = getPointsInLine(lastCursor, cursor)
+
+        points.forEach { point ->
+            val coordinates = getPointsInCircle(point, size)
+            coordinates.filter { Math.random() <= 0.75 }.forEach { this.setColor(it.x, it.y, toolBox.color) }
+        }
+
+        lastPrimaryAt = tick
     }
 
     override fun onSecondary() : Boolean {

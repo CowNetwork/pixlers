@@ -14,10 +14,12 @@ import network.cow.messages.core.Gradients
 import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.Canvas
 import network.cow.minigame.pixlers.getPointsInCircle
+import network.cow.minigame.pixlers.getPointsInLine
 import network.cow.spigot.extensions.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.awt.Point
 
 /**
  * @author Benedikt Wüller
@@ -26,11 +28,19 @@ open class PaintTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canv
 
     protected open val sizes = listOf(1, 2, 3, 4, 5)
 
+    private var lastPrimaryAt = 0L
     var size: Int = 1; private set
 
     override val primaryAction: Layer.() -> Unit = {
-        val coordinates = getPointsInCircle(cursor, size)
-        coordinates.forEach { this.setColor(it.x, it.y, getColor()) }
+        val lastCursor = if (tick - lastPrimaryAt <= 6) lastCursor else cursor
+        val points = getPointsInLine(lastCursor, cursor)
+
+        points.forEach { point ->
+            val coordinates = getPointsInCircle(point, size)
+            coordinates.forEach { this.setColor(it.x, it.y, getColor()) }
+        }
+
+        lastPrimaryAt = tick
     }
 
     override fun onSecondary() : Boolean {

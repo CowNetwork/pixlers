@@ -13,10 +13,13 @@ abstract class Tool(protected val toolBox: ToolBox, protected val canvas: Canvas
     protected val player = this.toolBox.player
 
     protected val cursor = Point(-1, -1)
+    protected var lastCursor = Point(-1, -1)
 
+    var tick = 0L
     var onUpdateItem: (() -> Unit)? = null
 
     fun updateCursor(x: Int, y: Int) {
+        this.lastCursor = Point(this.cursor.x, this.cursor.y)
         this.cursor.x = x
         this.cursor.y = y
         this.onCursorMoved()
