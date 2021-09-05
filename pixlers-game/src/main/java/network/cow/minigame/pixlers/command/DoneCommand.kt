@@ -3,7 +3,7 @@ package network.cow.minigame.pixlers.command
 import net.kyori.adventure.text.event.ClickEvent
 import network.cow.cowmands.Arguments
 import network.cow.cowmands.Cowmand
-import network.cow.messages.adventure.info
+import network.cow.messages.adventure.highlight
 import network.cow.messages.spigot.broadcastTranslatedInfo
 import network.cow.messages.spigot.sendTranslatedError
 import network.cow.minigame.noma.spigot.SpigotGame
@@ -43,9 +43,9 @@ class DoneCommand(private val game: SpigotGame) : Cowmand() {
         }
 
         Bukkit.getServer().broadcastTranslatedInfo(Translations.Commands.Done.SUCCESS,
-            donePlayers.size.toString().info(),
-            this.game.getIngamePlayers().size.toString().info(),
-            "/done".info().clickEvent(ClickEvent.runCommand("done"))
+            donePlayers.size.toString().highlight(),
+            this.game.getIngamePlayers().size.toString().highlight(),
+            "/done".highlight().clickEvent(ClickEvent.runCommand("done"))
         )
     }
 

@@ -53,8 +53,7 @@ class BlockCanvas(
     override fun drawColor(player: Player, x: Int, y: Int, color: Int) = this.drawColor(x, y, color, player)
 
     private fun drawColor(x: Int, y: Int, color: Int, vararg players: Player) {
-        if (x < 0 || x >= this.width || y < 0 || y >= this.height) error("The coordinates are out of bounds. Coordinates: ${x}x$y, Dimensions: ${this.width}x${this.height}")
-        val block = this.origin.getRelative(this.blockFaceX, x).getRelative(BlockFace.DOWN, y)
+        val block = this.getBlockAt(x, y)
 
         if (this.isVirtual) {
             val data = Bukkit.createBlockData(Material.NOTE_BLOCK) as NoteBlock
@@ -64,6 +63,13 @@ class BlockCanvas(
             this.palette.setBlock(color, block)
         }
     }
+
+    fun getBlockAt(x: Int, y: Int): Block {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) error("The coordinates are out of bounds. Coordinates: ${x}x$y, Dimensions: ${this.width}x${this.height}")
+        return origin.getRelative(blockFaceX, x).getRelative(BlockFace.DOWN, y)
+    }
+
+    fun getBlockAt(point: Point) = this.getBlockAt(point.x, point.y)
 
     fun calculatePointOnCanvas(player: Player): Point? {
         val boundingBox = this.boundingBox

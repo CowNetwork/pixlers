@@ -2,19 +2,17 @@ package network.cow.minigame.pixlers.tool
 
 import network.cow.messages.adventure.component
 import network.cow.messages.adventure.corporate
-import network.cow.messages.adventure.plus
-import network.cow.messages.adventure.translate
 import network.cow.messages.adventure.translateToComponent
 import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.Translations
-import network.cow.minigame.pixlers.canvas.BlockCanvas
 import network.cow.minigame.pixlers.canvas.Canvas
-import network.cow.minigame.pixlers.canvas.CompoundCanvas
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.data.type.NoteBlock
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.entity.Shulker
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
@@ -47,6 +45,8 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
 
     private lateinit var task: BukkitTask
     private var tick: Long = 0
+
+    private var shulker: Shulker? = null
 
     internal var color = this.palette.initialColor
 
@@ -124,8 +124,28 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
     }
 
     private fun updateCursor() {
-        val point = this.canvas.castOrFindBlockCanvas()?.calculatePointOnCanvas(this.player) ?: Point(-1, -1)
+        val canvas = this.canvas.castOrFindBlockCanvas()!!
+        val point = canvas.calculatePointOnCanvas(this.player) ?: Point(-1, -1)
         this.tools.forEach { it.updateCursor(point.x, point.y) }
+
+        if (point.x < 0 || point.y < 0) {
+            if (this.shulker != null) {
+                this.shulker?.remove()
+                this.shulker = null
+            }
+        } else {
+            val block = canvas.getBlockAt(point)
+            if (this.shulker == null) {
+                val entity = block.world.spawnEntity(block.location, EntityType.SHULKER) as Shulker
+                entity.isInvisible = true
+                entity.isSilent = true
+                entity.isGlowing = true
+                entity.setAI(false)
+                this.shulker = entity
+            } else {
+                this.shulker!!.teleport(block.location)
+            }
+        }
     }
 
 }
