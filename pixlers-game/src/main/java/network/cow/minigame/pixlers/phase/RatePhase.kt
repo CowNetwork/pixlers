@@ -90,7 +90,9 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
                 val item = ItemBuilder(Material.NAME_TAG)
                         .name(Translations.Phases.Rate.ITEM.translate(it).corporate())
                         .build()
+
                 it.inventory.addItem(item)
+                it.flySpeed = 0.5f // TODO: move to constant or config
             }
 
             this.next()

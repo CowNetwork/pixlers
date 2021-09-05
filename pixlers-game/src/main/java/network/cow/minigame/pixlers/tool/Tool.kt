@@ -10,6 +10,8 @@ import java.awt.Point
  */
 abstract class Tool(protected val toolBox: ToolBox, protected val canvas: Canvas) {
 
+    protected val player = this.toolBox.player
+
     protected val cursor = Point(-1, -1)
 
     var onUpdateItem: (() -> Unit)? = null

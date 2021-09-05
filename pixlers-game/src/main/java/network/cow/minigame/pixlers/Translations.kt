@@ -82,6 +82,12 @@ object Translations {
             const val ACTION_LEFT = "$PREFIX.state.action_left"
             const val ACTION_RIGHT = "$PREFIX.state.action_right"
         }
+
+        object Speed {
+            const val NAME = "$PREFIX.speed.name"
+            const val ACTION_LEFT = "$PREFIX.speed.action_left"
+            const val ACTION_RIGHT = "$PREFIX.speed.action_right"
+        }
     }
 
 }
