@@ -30,17 +30,19 @@ class SpeedTool(toolBox: ToolBox, canvas: Canvas) : Tool(toolBox, canvas) {
 
     override fun onPrimary() : Boolean {
         this.player.flySpeed = minOf(MAX_FLY_SPEED, this.player.flySpeed + STEP_SIZE)
+        this.onUpdateItem?.let { it() }
         return true
     }
 
     override fun onSecondary() : Boolean {
         this.player.flySpeed = maxOf(MIN_FLY_SPEED, this.player.flySpeed - STEP_SIZE)
+        this.onUpdateItem?.let { it() }
         return true
     }
 
     override fun getItemStack(player: Player): ItemStack {
         return ItemBuilder(Material.NETHERITE_PICKAXE)
-            .name(Translations.Tool.State.NAME.translate(player).gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.player.flySpeed.toString().comp()).info())
+            .name(Translations.Tool.Speed.NAME.translate(player).gradient(Gradients.CORPORATE) + " (%1\$s)".formatToComponent(this.player.flySpeed.toString().comp()).info())
             .lore(
                 Component.empty(),
                 Translations.Tool.Speed.ACTION_LEFT.translateToComponent(player, Translations.Action.LEFT.translate(player).highlight()).info(),

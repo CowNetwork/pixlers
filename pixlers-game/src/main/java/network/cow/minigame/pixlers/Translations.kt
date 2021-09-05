@@ -14,6 +14,21 @@ object Translations {
         const val LEFT = "$PREFIX.left"
     }
 
+    object Commands {
+        object Done {
+            private const val PREFIX = "${Translations.PREFIX}.commands.done"
+            const val ERROR_WRONG_PHASE = "$PREFIX.error_wrong_phase"
+            const val ERROR_ALREADY_DONE = "$PREFIX.error_already_done"
+            const val SUCCESS = "$PREFIX.success"
+        }
+
+        object Pixlers {
+            private const val PREFIX = "${Translations.PREFIX}.commands.pixlers"
+            const val SUCCESS_TIME = "$PREFIX.success_time"
+            const val SUCCESS_TOPIC = "$PREFIX.success_topic"
+        }
+    }
+
     object Phases {
         object Draw {
             private const val PREFIX = "${Translations.PREFIX}.phases.draw"

@@ -93,6 +93,8 @@ class DrawPhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             toolbox.apply()
             this.toolboxes[player] = toolbox
 
+            player.inventory.heldItemSlot = 0
+
             // Hide for all ingame players.
             players.filter { it != player }.forEach { player.hidePlayer(plugin, it) }
         }

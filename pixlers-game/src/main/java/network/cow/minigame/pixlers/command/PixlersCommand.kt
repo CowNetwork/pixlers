@@ -6,8 +6,10 @@ import network.cow.messages.adventure.comp
 import network.cow.messages.adventure.highlight
 import network.cow.messages.adventure.plus
 import network.cow.messages.spigot.sendInfo
+import network.cow.messages.spigot.sendTranslatedInfo
 import network.cow.minigame.noma.api.store.Store
 import network.cow.minigame.pixlers.StoreKeys
+import network.cow.minigame.pixlers.Translations
 import org.bukkit.command.CommandSender
 import java.awt.Component
 
@@ -40,7 +42,7 @@ class PixlersCommand(private val store: Store) : Cowmand() {
 
             val topic = (0 until args.size).joinToString(" ") { args[it] }
             this@PixlersCommand.store.set(StoreKeys.FORCED_TOPIC, topic)
-            sender.sendInfo("The topic has been changed to".comp() + topic.highlight() + ".")
+            sender.sendTranslatedInfo(Translations.Commands.Pixlers.SUCCESS_TOPIC, topic.highlight())
         }
 
     }
@@ -60,7 +62,7 @@ class PixlersCommand(private val store: Store) : Cowmand() {
             this@PixlersCommand.store.set(StoreKeys.DURATION, duration)
 
             val time = if (duration == 1L) "one second" else "$duration seconds"
-            sender.sendInfo("The duration has been changed to ".comp() + time.highlight() + ".")
+            sender.sendTranslatedInfo(Translations.Commands.Pixlers.SUCCESS_TIME, time.highlight())
         }
 
     }

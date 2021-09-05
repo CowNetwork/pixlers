@@ -93,6 +93,7 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
 
                 it.inventory.addItem(item)
                 it.flySpeed = 0.5f // TODO: move to constant or config
+                it.inventory.heldItemSlot = 0
             }
 
             this.next()
@@ -195,14 +196,15 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
         val canvas = this.canvases.firstOrNull { it.calculatePointOnCanvas(player) != null } ?: return
         this.selections[player] = this.canvasMappings.inverse()[canvas] ?: return
 
-        val players = this.canvasActors[canvas]!!.getPlayers()
-        if (players.contains(player)) {
+        val actor = this.canvasActors[canvas]!!
+        if (actor == this.game.getSpigotActor(player)) {
             // TODO: send message
             return
         }
 
         player.playSound(player.eyeLocation, Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F)
 
+        val players = actor.getPlayers()
         val names = players.map { it.displayName() }
         var name = Component.empty()
         this.canvasActors[canvas]!!.getPlayers().map {
@@ -223,7 +225,8 @@ class RatePhase(game: SpigotGame, config: PhaseConfig<Player, SpigotGame>) : Spi
             else -> throw IllegalStateException("Canvas not mapped.")
         }
 
-        // TODO: anonymous voting
+        // TODO: add anonymous voting
+
         player.sendInfo(Translations.Phases.Rate.SELECTED.translateToComponent(player, canvasKey.translate(player).highlight(), name))
     }
 
