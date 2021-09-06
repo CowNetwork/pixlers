@@ -22,24 +22,35 @@ import org.bukkit.inventory.ItemStack
 /**
  * @author Benedikt Wüller
  */
-open class SprayCanTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canvas) {
+open class SprayCanTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canvas), WithLiveCursorUpdates {
 
     protected open val sizes = listOf(1, 2, 3, 4, 5)
 
-    private var lastPrimaryAt = 0L
+    private var isPressed = false
     var size: Int = 3; private set
 
     override val primaryAction: Layer.() -> Unit = {
-        // TODO: constant
-        val lastCursor = if (tick - lastPrimaryAt <= 2) lastCursor else cursor
+        val lastCursor = if (isPressed) lastCursor else cursor
         val points = getPointsInLine(lastCursor, cursor).shuffled().filterIndexed { i, _ -> i % 3 == 0 }
 
         points.forEach { point ->
             val coordinates = getPointsInCircle(point, size)
             coordinates.filter { Math.random() <= 0.5 }.forEach { this.setColor(it.x, it.y, toolBox.color) }
         }
+    }
 
-        lastPrimaryAt = tick
+    override fun onPrimary(): Boolean {
+        this.isPressed = true
+        return super.onPrimary()
+    }
+
+    override fun onRelease() {
+        this.isPressed = false
+    }
+
+    override fun onCursorMoved() {
+        if (!this.isPressed) return
+        super.onPrimary()
     }
 
     override fun onSecondary() : Boolean {

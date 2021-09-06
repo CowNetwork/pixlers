@@ -24,24 +24,35 @@ import java.awt.Point
 /**
  * @author Benedikt Wüller
  */
-open class PaintTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canvas) {
+open class PaintTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canvas), WithLiveCursorUpdates {
 
     protected open val sizes = listOf(1, 2, 3, 4, 5)
 
-    private var lastPrimaryAt = 0L
+    private var isPressed = false
     var size: Int = 1; private set
 
     override val primaryAction: Layer.() -> Unit = {
-        // TODO: constant
-        val lastCursor = if (tick - lastPrimaryAt <= 3) lastCursor else cursor
+        val lastCursor = if (isPressed) lastCursor else cursor
         val points = getPointsInLine(lastCursor, cursor)
 
         points.forEach { point ->
             val coordinates = getPointsInCircle(point, size)
             coordinates.forEach { this.setColor(it.x, it.y, getColor()) }
         }
+    }
 
-        lastPrimaryAt = tick
+    override fun onPrimary(): Boolean {
+        this.isPressed = true
+        return super.onPrimary()
+    }
+
+    override fun onRelease() {
+        this.isPressed = false
+    }
+
+    override fun onCursorMoved() {
+        if (!this.isPressed) return
+        super.onPrimary()
     }
 
     override fun onSecondary() : Boolean {

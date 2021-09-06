@@ -1,5 +1,12 @@
 package network.cow.minigame.pixlers.tool
 
+import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.events.PacketAdapter
+import com.comphenix.protocol.events.PacketContainer
+import com.comphenix.protocol.events.PacketEvent
+import com.comphenix.protocol.events.PacketListener
+import com.comphenix.protocol.wrappers.EnumWrappers
 import network.cow.messages.adventure.component
 import network.cow.messages.adventure.corporate
 import network.cow.messages.adventure.translateToComponent
@@ -7,6 +14,7 @@ import network.cow.minigame.pixlers.ColorPalette
 import network.cow.minigame.pixlers.PixlersPlugin
 import network.cow.minigame.pixlers.Translations
 import network.cow.minigame.pixlers.canvas.Canvas
+import network.cow.protocol.wrappers.WrapperPlayClientDig
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.data.type.NoteBlock
@@ -38,13 +46,15 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
         SpeedTool(this, this.canvas)
     )
 
-    private var currentTool: Tool? = null
+    private var currentTool: Tool? = this.tools.first()
     private var cursor = Point(-1, -1)
 
     private lateinit var task: BukkitTask
     private var tick: Long = 0
 
     internal var color = this.palette.initialColor
+
+    private lateinit var packetAdapter: PacketListener
 
     fun apply() {
         val plugin = JavaPlugin.getPlugin(PixlersPlugin::class.java)
@@ -64,6 +74,24 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
 
         this.currentTool = this.tools.getOrNull(this.player.inventory.heldItemSlot)
         this.task = Bukkit.getScheduler().runTaskTimer(plugin, this::updateTools, 1L, 1L)
+
+        this.packetAdapter = object : PacketAdapter(JavaPlugin.getPlugin(PixlersPlugin::class.java), PacketType.Play.Client.BLOCK_DIG) {
+            override fun onPacketReceiving(event: PacketEvent) {
+                if (event.player != player) {
+                    super.onPacketReceiving(event)
+                    return
+                }
+
+                val wrapper = WrapperPlayClientDig(event.packet)
+                if (wrapper.status == EnumWrappers.PlayerDigType.RELEASE_USE_ITEM) {
+                    currentTool?.onRelease()
+                }
+
+                super.onPacketReceiving(event)
+            }
+        }
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(this.packetAdapter)
     }
 
     fun remove() {
@@ -71,6 +99,9 @@ class ToolBox(val player: Player, val canvas: Canvas, private val palette: Color
         this.task.cancel()
         this.tools.forEach { it.onUpdateItem = null }
         this.player.inventory.clear()
+
+        if (!this::packetAdapter.isInitialized) return
+        ProtocolLibrary.getProtocolManager().removePacketListener(this.packetAdapter)
     }
 
     @EventHandler

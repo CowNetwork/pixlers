@@ -25,6 +25,8 @@ abstract class Tool(protected val toolBox: ToolBox, protected val canvas: Canvas
         this.onCursorMoved()
     }
 
+    open fun onRelease() = Unit
+
     protected open fun onCursorMoved() = Unit
 
     fun executePrimary() : Boolean = this.onPrimary()
