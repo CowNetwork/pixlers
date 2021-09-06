@@ -30,6 +30,7 @@ open class SprayCanTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, c
     var size: Int = 3; private set
 
     override val primaryAction: Layer.() -> Unit = {
+        // TODO: 6 to constant
         val lastCursor = if (tick - lastPrimaryAt <= 6) lastCursor else cursor
         val points = getPointsInLine(lastCursor, cursor)
 
