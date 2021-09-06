@@ -31,7 +31,7 @@ open class SprayCanTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, c
 
     override val primaryAction: Layer.() -> Unit = {
         // TODO: constant
-        val lastCursor = if (tick - lastPrimaryAt <= 4) lastCursor else cursor
+        val lastCursor = if (tick - lastPrimaryAt <= 2) lastCursor else cursor
         val points = getPointsInLine(lastCursor, cursor).shuffled().filterIndexed { i, _ -> i % 3 == 0 }
 
         points.forEach { point ->

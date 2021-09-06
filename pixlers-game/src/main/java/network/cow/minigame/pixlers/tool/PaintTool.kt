@@ -33,7 +33,7 @@ open class PaintTool(toolBox: ToolBox, canvas: Canvas) : LayerTool(toolBox, canv
 
     override val primaryAction: Layer.() -> Unit = {
         // TODO: constant
-        val lastCursor = if (tick - lastPrimaryAt <= 5) lastCursor else cursor
+        val lastCursor = if (tick - lastPrimaryAt <= 3) lastCursor else cursor
         val points = getPointsInLine(lastCursor, cursor)
 
         points.forEach { point ->

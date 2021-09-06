@@ -18,7 +18,7 @@ class PixlersPlugin : NomaGamePlugin() {
     override fun onEnable() {
         super.onEnable()
 
-        MessagesPlugin.PREFIX = "Pixlers Cock".gradient(Gradients.MINIGAME)
+        MessagesPlugin.PREFIX = "Pixlers".gradient(Gradients.MINIGAME)
 
         this.registerCommands()
         this.registerEvents()
